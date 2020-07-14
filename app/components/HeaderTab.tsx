@@ -10,7 +10,7 @@ interface State {
 
 class HeaderTab extends React.Component<any, State> {
 	state = {
-		selectedIndex: 1
+		selectedIndex: 0
 	}
 	
 	updateIndex = (selectedIndex: any) => {
