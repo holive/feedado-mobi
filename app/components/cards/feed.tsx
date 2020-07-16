@@ -61,13 +61,14 @@ export const Dropdown = () => {
 					marginTop: 20,
 					marginBottom: 10,
 					marginLeft: 16,
+					marginRight: 16,
 					borderRadius: 3,
 					color: '#5c6b76',
 					backgroundColor: '#fff',
 				},
 				iconContainer: {
 					top: 30,
-					right: 20,
+					right: 25,
 				},
 			}}
 			Icon={() => <Icon name="keyboard-arrow-down" style={feedStyle.icon} /> }
@@ -100,20 +101,15 @@ const Item = (item: { item: Data }) => {
 };
 
 const App = () => {
-	// const [selectedCategory, setCategory] = useState(categories[0]);
-	
 	const renderItem = (item: { item: Data }) => {
 		return (
 			<Item
 				item={item.item}
-				// onPress={() => setSelectedId(item.id)}
 			/>
 		);
 	};
 	
 	return (
-		// style={{ height: 40, width: "80%", backgroundColor: '#fff', marginTop: 20, marginBottom: 15, marginLeft: 15 }}
-		
 		<SafeAreaView style={feedStyle.container}>
 			<Dropdown/>
 			
@@ -129,9 +125,6 @@ const App = () => {
 
 const feedStyle = StyleSheet.create({
 	container: {
-		// flexDirection: "column",
-		// alignItems: "center",
-		flexWrap: "wrap",
 		flex: 1,
 	},
 	itemContainer: {

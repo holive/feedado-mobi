@@ -24,7 +24,8 @@ export const App = () => {
 			<HeaderTab/>
 			
 			<MainWrapper>
-				{showWebview.show ? <CardFeed/> : <CardFeed/>}
+				{/*{showWebview.show ? <CardFeed/> : <CardFeed/>}*/}
+				<CardFeed/>
 			</MainWrapper>
 		</>
 	);
