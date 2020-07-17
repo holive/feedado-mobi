@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
 	FlatList,
 	Linking,
@@ -11,6 +11,7 @@ import {
 import Icon from "react-native-vector-icons/MaterialIcons";
 import styles from '../../styles/theme.style';
 import RNPickerSelect from 'react-native-picker-select';
+import { StateContext } from "../../context/Context";
 
 interface Data {
 	id: string
@@ -38,6 +39,19 @@ const DATA = [
 		sourceName: "economia.estadao.com.br",
 		url: "https://google.com"
 	},
+	{
+		id: "58294a0f-3da1-471f-bd96-145571e29d72",
+		title: "Located two hours south of Sydnes in the South Highlands of a new experience...",
+		sourceName: "economia.estadao.com.br",
+		url: "https://google.com"
+	},
+	{
+		id: "52694a0f-3da1-471f-bd96-145571e29d72",
+		title: "Located two hours south of Sydnes in the South Highlands of a new experience...",
+		sourceName: "economia.estadao.com.br",
+		url: "https://google.com"
+	},
+	
 ];
 
 const categories = [
@@ -100,7 +114,10 @@ const Item = (item: { item: Data }) => {
 	)
 };
 
-const App = () => {
+const Feed = () => {
+	const { state, actions } = useContext(StateContext);
+	if (!state.screens.feeds) return null;
+	
 	const renderItem = (item: { item: Data }) => {
 		return (
 			<Item
@@ -126,6 +143,7 @@ const App = () => {
 const feedStyle = StyleSheet.create({
 	container: {
 		flex: 1,
+		paddingBottom: 10,
 	},
 	itemContainer: {
 		flexDirection: "row",
@@ -161,4 +179,4 @@ const loadInBrowser = (url: string) => {
 	Linking.openURL(url).catch(err => console.error("Couldn't load page", err));
 };
 
-export default App;
+export default Feed;

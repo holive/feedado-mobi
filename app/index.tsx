@@ -1,32 +1,33 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { StatusBar } from 'react-native';
 import { Header } from 'react-native-elements';
 import HeaderTab from "./components/HeaderTab";
-import Refresh from "./components/icons/Refresh";
+import { RightIconHeader } from "./components/icons/Refresh";
 import styles from './styles/theme.style';
 import MainWrapper from "./components/MainWrapper";
-import CardFeed from './components/cards/feed'
+import Schemas from "./components/cards/schemas";
+import { Context, StateContext } from "./context/Context";
+import Feed from "./components/cards/feed";
 
 export const App = () => {
-	const [showWebview, setShowWebview] = useState({ show: false, url: '' });
-	const lefHeaderIcon = showWebview.show ? 'arrow-back' : 'menu';
+	const { state } = useContext(StateContext);
 	
 	return (
-		<>
+		<Context>
 			<StatusBar backgroundColor="#46494c" barStyle="light-content"/>
 			
 			<Header
-				leftComponent={{ icon: lefHeaderIcon, color: '#fff' }}
-				rightComponent={<Refresh/>}
+				leftComponent={{ icon: 'menu', color: '#fff' }}
+				rightComponent={<RightIconHeader/>}
 				backgroundColor={styles.HEADER_BACKGROUND_COLOR}
 			/>
 			
 			<HeaderTab/>
 			
 			<MainWrapper>
-				{/*{showWebview.show ? <CardFeed/> : <CardFeed/>}*/}
-				<CardFeed/>
+				<Feed/>
+				<Schemas/>
 			</MainWrapper>
-		</>
+		</Context>
 	);
 };
