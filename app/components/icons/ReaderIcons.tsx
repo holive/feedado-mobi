@@ -28,3 +28,28 @@ export const RightIconHeader = () => {
 		/>
 	)
 }
+
+export const LeftIconsdHeader = () => {
+	const { state, actions } = useContext(StateContext);
+	
+	if (state.screens.newSchema) {
+		return (
+			<Icon
+				name="arrow-back"
+				size={24}
+				color="#FFF"
+				onPress={() => console.log('refresh')}
+			/>
+		)
+		
+	}
+	
+	return (
+		<Icon
+			name="menu"
+			size={24}
+			color="#FFF"
+			onPress={() => console.log('refresh')}
+		/>
+	)
+}

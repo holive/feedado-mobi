@@ -1,38 +1,7 @@
 import React, { useState } from "react";
+import { setScreens } from "./screensState";
+import State, { initialState } from "./state";
 
-interface Screens {
-	feeds: boolean
-	schemas: boolean
-}
-
-interface State {
-	screens: Screens,
-}
-
-const initialState = {
-	screens: {
-		feeds: true,
-		schemas: false,
-	}
-} as State
-
-export const StateContext = React.createContext(
-	{
-		state: initialState,
-		actions: {
-			setScreens: (screen: { [key: string]: boolean }) => {},
-		}
-	}
-);
-
-const setScreens = (state: State, setState: Function, screen: { [key: string]: boolean }) => {
-	const newScreenState: Screens = {
-		feeds: false,
-		schemas: false,
-	}
-	
-	setState({ screens: { ...newScreenState, ...screen } });
-}
 
 export const Context = (props: { children: React.ReactNode; }) => {
 	const [state, _setState] = useState(initialState);
@@ -52,3 +21,12 @@ export const Context = (props: { children: React.ReactNode; }) => {
 		</StateContext.Provider>
 	);
 }
+
+export const StateContext = React.createContext(
+	{
+		state: initialState,
+		actions: {
+			setScreens: (screen: { [key: string]: boolean }) => {},
+		}
+	}
+);
