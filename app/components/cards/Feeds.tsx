@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState } from "react"
 import {
 	FlatList,
 	Linking,
@@ -7,9 +7,9 @@ import {
 	Text,
 	TouchableOpacity,
 	View
-} from "react-native";
-import styles from '../../styles/theme.style';
-import { StateContext } from "../../context/Context";
+} from "react-native"
+import styles from '../../styles/theme.style'
+import { StateContext } from "../../context/Context"
 
 interface Data {
 	id: string
@@ -50,7 +50,7 @@ const DATA = [
 		category: "economia",
 	},
 	
-];
+]
 
 const Item = (item: { item: Data }) => {
 	return (
@@ -66,19 +66,18 @@ const Item = (item: { item: Data }) => {
 			</TouchableOpacity>
 		</View>
 	)
-};
+}
 
-const Schemas = () => {
-	const { state, actions } = useContext(StateContext);
-	if (!state.screens.schemas) return null;
+const Feeds = () => {
+	const { state, actions } = useContext(StateContext)
 	
 	const renderItem = (item: { item: Data }) => {
 		return (
 			<Item
 				item={item.item}
 			/>
-		);
-	};
+		)
+	}
 	
 	return (
 		<SafeAreaView style={schemaStyle.container}>
@@ -88,8 +87,8 @@ const Schemas = () => {
 				keyExtractor={(item) => item.id}
 			/>
 		</SafeAreaView>
-	);
-};
+	)
+}
 
 const schemaStyle = StyleSheet.create({
 	container: {
@@ -124,10 +123,10 @@ const schemaStyle = StyleSheet.create({
 		color: '#46494c',
 		textTransform: "uppercase",
 	}
-});
+})
 
 const loadInBrowser = (url: string) => {
-	Linking.openURL(url).catch(err => console.error("Couldn't load page", err));
-};
+	Linking.openURL(url).catch(err => console.error("Couldn't load page", err))
+}
 
-export default Schemas;
+export default Feeds

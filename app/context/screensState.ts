@@ -1,4 +1,4 @@
-import State from "./state";
+import State from "./state"
 
 export default interface Screens {
 	feeds: boolean
@@ -13,5 +13,5 @@ export const setScreens = (state: State, setState: Function, screen: { [key: str
 		newSchema: false,
 	}
 	
-	setState({ screens: { ...newScreenState, ...screen } });
+	setState({ screens: { ...newScreenState, ...screen } })
 }

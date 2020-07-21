@@ -1,6 +1,6 @@
-import React from 'react';
-import { TextInput } from 'react-native';
-import styles from './TextArea.component.style';
+import React from 'react'
+import { TextInput } from 'react-native'
+import styles from './TextArea.component.style'
 
 interface Props {
 	style: Object
@@ -16,7 +16,7 @@ class TextArea extends React.Component<Props, State> {
 	}
 	
 	render() {
-		const { ...extraProps } = this.props;
+		const { ...extraProps } = this.props
 		
 		return (
 			<TextInput
@@ -26,8 +26,8 @@ class TextArea extends React.Component<Props, State> {
 				onChangeText={(text) => this.setState({ text })}
 				value={this.state.text}
 			/>
-		);
+		)
 	}
 }
 
-export default TextArea;
+export default TextArea

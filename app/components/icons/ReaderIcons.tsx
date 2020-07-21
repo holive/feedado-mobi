@@ -1,12 +1,14 @@
-import React, { useContext } from 'react';
+import React, { useContext } from 'react'
 
-import Icon from "react-native-vector-icons/MaterialIcons";
-import { StateContext } from "../../context/Context";
+import Icon from "react-native-vector-icons/MaterialIcons"
+import { StateContext } from "../../context/Context"
+import * as RootNavigation from "../../routes/RootNavigation"
+import { RSS, NEW_FEED, FEEDS } from "../../variables"
 
-Icon.loadFont();
+Icon.loadFont()
 
 export const RightIconHeader = () => {
-	const { state, actions } = useContext(StateContext);
+	const { state, actions } = useContext(StateContext)
 	
 	if (state.screens.schemas) {
 		return (
@@ -14,7 +16,10 @@ export const RightIconHeader = () => {
 				name="add"
 				size={24}
 				color="#FFF"
-				onPress={() => console.log('refresh')}
+				onPress={() => {
+					RootNavigation.navigate(NEW_FEED, null)
+					actions.setScreens({ newSchema: true })
+				}}
 			/>
 		)
 	}
@@ -30,7 +35,7 @@ export const RightIconHeader = () => {
 }
 
 export const LeftIconsdHeader = () => {
-	const { state, actions } = useContext(StateContext);
+	const { state, actions } = useContext(StateContext)
 	
 	if (state.screens.newSchema) {
 		return (
@@ -38,7 +43,10 @@ export const LeftIconsdHeader = () => {
 				name="arrow-back"
 				size={24}
 				color="#FFF"
-				onPress={() => console.log('refresh')}
+				onPress={() => {
+					RootNavigation.navigate(FEEDS, null)
+					actions.setScreens({ schemas: true })
+				}}
 			/>
 		)
 		

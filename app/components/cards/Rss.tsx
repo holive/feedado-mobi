@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState } from "react"
 import {
 	FlatList,
 	Linking,
@@ -7,11 +7,11 @@ import {
 	Text,
 	TouchableOpacity,
 	View
-} from "react-native";
-import Icon from "react-native-vector-icons/MaterialIcons";
-import styles from '../../styles/theme.style';
-import RNPickerSelect from 'react-native-picker-select';
-import { StateContext } from "../../context/Context";
+} from "react-native"
+import Icon from "react-native-vector-icons/MaterialIcons"
+import styles from '../../styles/theme.style'
+import RNPickerSelect from 'react-native-picker-select'
+import { StateContext } from "../../context/Context"
 
 interface Data {
 	id: string
@@ -52,15 +52,15 @@ const DATA = [
 		url: "https://google.com"
 	},
 	
-];
+]
 
 const categories = [
 	{ label: 'ECONOMIA', value: 'economia' },
 	{ label: 'TECNOLOGIA', value: 'tecnologia' },
-];
+]
 
 export const Dropdown = () => {
-	const [selectedCategory, setCategory] = useState(categories[0].value);
+	const [selectedCategory, setCategory] = useState(categories[0].value)
 	
 	return (
 		<RNPickerSelect
@@ -88,8 +88,8 @@ export const Dropdown = () => {
 			Icon={() => <Icon name="keyboard-arrow-down" style={feedStyle.icon} /> }
 			useNativeAndroidPickerStyle={false}
 		/>
-	);
-};
+	)
+}
 
 const Item = (item: { item: Data }) => {
 	return (
@@ -112,19 +112,18 @@ const Item = (item: { item: Data }) => {
 			</TouchableOpacity>
 		</View>
 	)
-};
+}
 
-const Feed = () => {
-	const { state, actions } = useContext(StateContext);
-	if (!state.screens.feeds) return null;
+const Rss = () => {
+	const { state, actions } = useContext(StateContext)
 	
 	const renderItem = (item: { item: Data }) => {
 		return (
 			<Item
 				item={item.item}
 			/>
-		);
-	};
+		)
+	}
 	
 	return (
 		<SafeAreaView style={feedStyle.container}>
@@ -137,8 +136,8 @@ const Feed = () => {
 				// extraData={selectedId}
 			/>
 		</SafeAreaView>
-	);
-};
+	)
+}
 
 const feedStyle = StyleSheet.create({
 	container: {
@@ -173,10 +172,10 @@ const feedStyle = StyleSheet.create({
 		fontSize: 13,
 		marginTop: 4,
 	}
-});
+})
 
 const loadInBrowser = (url: string) => {
-	Linking.openURL(url).catch(err => console.error("Couldn't load page", err));
-};
+	Linking.openURL(url).catch(err => console.error("Couldn't load page", err))
+}
 
-export default Feed;
+export default Rss

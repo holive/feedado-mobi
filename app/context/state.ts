@@ -1,15 +1,17 @@
-import Screens from "./screensState";
-import NewSchema from "./newSchemaState";
+import Screens from "./screensState"
+import FeedService from "../feed/service"
+import RssService from "../rss/service"
 
 export default interface State {
 	screens: Screens,
-	newSchema: NewSchema
+	feedService: FeedService
+	rssService: RssService
 }
 
 export const initialState = {
 	screens: {
-		feeds: false,
+		feeds: true,
 		schemas: false,
-		newSchema: true,
+		newSchema: false,
 	}
 } as State

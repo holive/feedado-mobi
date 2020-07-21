@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native'
 
 export default StyleSheet.create({
 	textArea: {
@@ -7,4 +7,4 @@ export default StyleSheet.create({
 		borderColor: 'gray',
 		borderWidth: 1
 	}
-});
+})
