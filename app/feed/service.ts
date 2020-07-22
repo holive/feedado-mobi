@@ -8,7 +8,7 @@ class FeedService implements Repository {
 		this.repo = repository
 	}
 	
-	public create = (feed: Feed): Error => {
+	public create = (feed: Feed): Error | null => {
 		if (!this.validateURL(feed.source)) return new Error('invalid url')
 		
 		if (feed.source[feed.source.length - 1] == '/') feed.source = feed.source.slice(0, -1)
@@ -19,19 +19,19 @@ class FeedService implements Repository {
 		return this.repo.create(feed)
 	}
 	
-	public update = (feed: Feed): Error => {
+	public update = (feed: Feed): Error | null => {
 		return this.repo.update(feed)
 	}
 	
-	public delete = (source: string): Error => {
+	public delete = (source: string): Error | null => {
 		return this.repo.delete(source)
 	}
 	
-	public findAll = (): { searchResult: SearchResult, error: Error } => {
+	public findAll = (): { searchResult: SearchResult, error: Error | null } => {
 		return this.repo.findAll()
 	}
 	
-	public findBySource = (source: string): { feed: Feed, error: Error } => {
+	public findBySource = (source: string): { feed: Feed, error: Error | null } => {
 		return this.repo.findBySource(source)
 	}
 	

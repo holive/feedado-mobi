@@ -1,6 +1,8 @@
 import React, { useState } from "react"
 import { setScreens } from "./screensState"
-import State, { initialState } from "./state"
+import State, { getInitialState } from "./state"
+
+const initialState = getInitialState()
 
 export const Context = (props: { children: React.ReactNode }) => {
 	const [state, _setState] = useState(initialState)
