@@ -4,6 +4,15 @@ import State, { getInitialState } from "./state"
 
 const initialState = getInitialState()
 
+export const StateContext = React.createContext(
+	{
+		state: initialState,
+		actions: {
+			setScreens: (screen: { [key: string]: boolean }) => {},
+		}
+	}
+)
+
 export const Context = (props: { children: React.ReactNode }) => {
 	const [state, _setState] = useState(initialState)
 	
@@ -22,12 +31,3 @@ export const Context = (props: { children: React.ReactNode }) => {
 		</StateContext.Provider>
 	)
 }
-
-export const StateContext = React.createContext(
-	{
-		state: initialState,
-		actions: {
-			setScreens: (screen: { [key: string]: boolean }) => {},
-		}
-	}
-)

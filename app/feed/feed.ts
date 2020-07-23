@@ -15,5 +15,5 @@ export interface Feed {
 }
 
 export interface SearchResult {
-	feeds: Array<Feed>
+	feeds: Array<Feed> | null
 }

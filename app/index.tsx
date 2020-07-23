@@ -15,8 +15,8 @@ const Stack = createStackNavigator()
 
 export const App = () => {
 	return (
-		<Context>
-			<NavigationContainer ref={navigationRef}>
+		<NavigationContainer ref={navigationRef}>
+			<Context>
 				<CustomHeader/>
 				
 				<MainWrapper>
@@ -26,7 +26,7 @@ export const App = () => {
 						<Stack.Screen name={NEW_FEED} component={NewFeed}/>
 					</Stack.Navigator>
 				</MainWrapper>
-			</NavigationContainer>
-		</Context>
+			</Context>
+		</NavigationContainer>
 	)
 }

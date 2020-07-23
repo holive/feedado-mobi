@@ -1,11 +1,6 @@
 import { Repository } from "../rss/repository";
 import { SearchResult } from "../rss/rss";
-
-const Datastore = require('react-native-local-mongodb')
-
-const newRssCollection = () => {
-	return new Datastore({ filename: 'rss', autoload: true })
-}
+import { newCollection } from "./client";
 
 class MongoRssRepo implements Repository {
 	private rssCollection: any
@@ -15,19 +10,19 @@ class MongoRssRepo implements Repository {
 	}
 	
 	delete(source: string): Error {
-		return undefined;
+		return new Error();
 	}
 	
 	findAll(): { searchResult: SearchResult; error: Error } {
-		return { error: undefined, searchResult: undefined };
+		return { error: new Error(), searchResult: undefined };
 	}
 	
 	findAllByCategory(category: string): { searchResult: SearchResult; error: Error } {
-		return { error: undefined, searchResult: undefined };
+		return { error: new Error(), searchResult: undefined };
 	}
 	
 }
 
 export const newMongoRssRepo = () => {
-	return new MongoRssRepo(newRssCollection())
+	return new MongoRssRepo(newCollection('rss'))
 }

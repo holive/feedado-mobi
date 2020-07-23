@@ -1,9 +1,10 @@
 import { Feed, SearchResult } from "./feed"
+import { NError } from "../variables";
 
 export interface Repository {
-	create: (feed: Feed) => Promise<Error | null>
-	update: (feed: Feed) => Error | null
-	delete: (source: string) => Error | null
-	findBySource: (source: string) => { feed: Feed, error: Error | null }
-	findAll: () => { searchResult: SearchResult, error: Error | null }
+	create: (feed: Feed) => Promise<NError>
+	update: (feed: Feed) => Promise<NError>
+	delete: (source: string) => Promise<NError>
+	findBySource: (source: string) => Promise<{ feed: Feed, error: NError }>
+	findAll: () => Promise<{ searchResult: SearchResult }>
 }

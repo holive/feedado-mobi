@@ -1,83 +1,62 @@
 import { Repository } from "../feed/repository";
 import { Feed, SearchResult, Section } from "../feed/feed";
-
-const Datastore = require('react-native-local-mongodb')
-
-const newFeedCollection = () => {
-	return new Datastore({ filename: 'feed', autoload: true })
-}
+import { MongoDataStore, newCollection } from "./client";
+import { NError } from "../variables";
 
 class MongoFeedRepo implements Repository {
-	private feedCollection: any
+	private feedCollection: MongoDataStore
 	
-	constructor(feedCollection: any) {
+	constructor(feedCollection: MongoDataStore) {
 		this.feedCollection = feedCollection
 	}
 	
-	public create = async (feed: Feed): Promise<Error | null> => {
-		let error: Error | null
-		await this.feedCollection.insert(feed, async (err: Error | null, newDoc: any) => error = err)
+	public create = async (feed: Feed): Promise<NError> => {
+		const newDoc = await this.feedCollection.insertAsync(feed)
 		
-		return error
+		if (newDoc._id) return null
+		
+		return new Error('could not create the feed')
 	}
 	
-	delete(source: string): Error {
-		return new Error()
-	}
-	
-	findAll(): { searchResult: SearchResult, error: Error } {
-		const searchResult = {
-			feeds: [
-				{
-					source: 'string',
-					description: 'string',
-					category: 'string',
-					sections: [
-						{
-							section_selector: 'string',
-							title_selector: 'string',
-							title_must_contain: 'string',
-							subtitle_selector: 'string',
-							subtitle_must_contain: 'string',
-							url_selector: 'string'
-						}
-					]
-				}
-			]
+	public findBySource = async (source: string): Promise<{ feed: Feed, error: NError }> => {
+		const result = await this.feedCollection.findOneAsync({ source: source })
+		
+		if (result) {
+			return {
+				error: null,
+				feed: result as Feed,
+			}
 		}
 		
 		return {
-			error: new Error(),
-			searchResult: searchResult,
+			error: new Error('feed not found'),
+			feed: {} as Feed,
 		}
 	}
 	
-	findBySource(source: string): { feed: Feed, error: Error } {
+	public delete = async (source: string): Promise<NError> => {
+		const removed = await this.feedCollection.removeAsync({ source: source }, {})
+		// erase all this.feedCollection.removeAsync({}, { multi: true })
+		
+		if (removed != 1) return new Error('could not remove feed')
+		return null
+	}
+	
+	public findAll = async (): Promise<{ searchResult: SearchResult }> => {
+		const result = await this.feedCollection.findAsync({})
+		
 		return {
-			error: new Error(),
-			feed: {
-				source: 'string',
-				description: 'string',
-				category: 'string',
-				sections: [
-					{
-						section_selector: 'string',
-						title_selector: 'string',
-						title_must_contain: 'string',
-						subtitle_selector: 'string',
-						subtitle_must_contain: 'string',
-						url_selector: 'string'
-					}
-				]
+			searchResult: {
+				feeds: result as Array<Feed>,
 			}
 		}
 	}
 	
-	update(feed: Feed): Error {
-		return new Error()
+	public update = async (feed: Feed): Promise<NError> => {
+		return null
 	}
 }
 
 export const newMongoFeedRepo = () => {
-	return new MongoFeedRepo(newFeedCollection())
+	return new MongoFeedRepo(newCollection('feed'))
 }

@@ -12,6 +12,7 @@ import Icon from "react-native-vector-icons/MaterialIcons"
 import styles from '../../styles/theme.style'
 import RNPickerSelect from 'react-native-picker-select'
 import { StateContext } from "../../context/Context"
+import { Button } from "react-native-elements";
 
 interface Data {
 	id: string
@@ -125,8 +126,50 @@ const Rss = () => {
 		)
 	}
 	
+	// TODO: delete me
+	const teste = async () => {
+		console.log('ponto 1')
+		
+		 await state.feedService.create({
+			source: 'https://google.com',
+			description: 'string',
+			category: 'string',
+			sections: [
+				{
+					section_selector: 'string',
+					title_selector: 'string',
+					title_must_contain: 'string',
+					subtitle_selector: 'string',
+					subtitle_must_contain: 'string',
+					url_selector: 'string'
+				}
+			]
+		}).then((value) => {
+			console.log('test: then: ', value)
+		 }).catch((e) => console.log('teste: catch: ', e.message))
+		
+		console.log('ponto Y')
+		
+		// // test remove
+		// await state.feedService.delete('https://google.com')
+		// 	.then((res) => console.log('test delete: then: ', res))
+		// 	.catch((e) => console.log('test delete: catch: ', e.message))
+		
+		// test find all
+		await state.feedService.findAll()
+			.then((res) => {
+				console.log('test findall: then: ')
+				res.searchResult.feeds?.forEach((v) => {
+					console.log(v)
+				})
+			})
+			.catch((e) => console.log('test findall: catch: ', e.message))
+	}
+	
 	return (
 		<SafeAreaView style={feedStyle.container}>
+			<Button onPress={async () => await teste()}>teste</Button>
+			
 			<Dropdown/>
 			
 			<FlatList
