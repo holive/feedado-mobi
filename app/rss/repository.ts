@@ -1,7 +1,9 @@
-import { SearchResult } from "./rss"
+import { Rss, SearchResult } from "./rss"
+import { NError } from "../variables";
 
 export interface Repository {
-	delete: (source: string) => Error
-	findAllByCategory: (category: string) => { searchResult: SearchResult, error: Error }
-	findAll: () => { searchResult: SearchResult }
+	create: (rss: Rss) => Promise<NError>
+	delete: (url: string) => Promise<NError>
+	findAllByCategory: (category: string) => Promise<{ searchResult: SearchResult }>
+	findAll: () => Promise<{ searchResult: SearchResult }>
 }

@@ -7,5 +7,5 @@ export interface Rss {
 }
 
 export interface SearchResult {
-	feeds: Array<Rss> | null
+	rsss: Array<Rss> | null
 }

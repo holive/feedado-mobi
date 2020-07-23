@@ -7,12 +7,12 @@ import { newMongoRssRepo } from "../mongo/rss";
 export default interface State {
 	screens: Screens
 	feedService: FeedService
-	// rssService: RssService
+	rssService: RssService
 }
 
 export const getInitialState = (): State => {
 	const feedService = new FeedService(newMongoFeedRepo())
-	// const rssService = new RssService(newMongoRssRepo())
+	const rssService = new RssService(newMongoRssRepo())
 	
 	return {
 		screens: {
@@ -21,6 +21,6 @@ export const getInitialState = (): State => {
 				newSchema: false,
 		},
 		feedService: feedService,
-		// rssService: rssService,
+		rssService: rssService,
 	}
 }

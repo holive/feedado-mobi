@@ -1,5 +1,5 @@
 import { Repository } from "../feed/repository";
-import { Feed, SearchResult, Section } from "../feed/feed";
+import { Feed, SearchResult } from "../feed/feed";
 import { MongoDataStore, newCollection } from "./client";
 import { NError } from "../variables";
 
@@ -18,6 +18,21 @@ class MongoFeedRepo implements Repository {
 		return new Error('could not create the feed')
 	}
 	
+	public update = async (feed: Feed): Promise<NError> => {
+		const result = await this.feedCollection.updateAsync({ source: feed.source }, feed, {})
+		
+		if (result as unknown as number != 1) return new Error('could not update feed')
+		return null
+	}
+	
+	public delete = async (source: string): Promise<NError> => {
+		const removed = await this.feedCollection.removeAsync({ source: source }, {})
+		// erase all this.feedCollection.removeAsync({}, { multi: true })
+		
+		if (removed != 1) return new Error('could not remove feed')
+		return null
+	}
+	
 	public findBySource = async (source: string): Promise<{ feed: Feed, error: NError }> => {
 		const result = await this.feedCollection.findOneAsync({ source: source })
 		
@@ -34,14 +49,6 @@ class MongoFeedRepo implements Repository {
 		}
 	}
 	
-	public delete = async (source: string): Promise<NError> => {
-		const removed = await this.feedCollection.removeAsync({ source: source }, {})
-		// erase all this.feedCollection.removeAsync({}, { multi: true })
-		
-		if (removed != 1) return new Error('could not remove feed')
-		return null
-	}
-	
 	public findAll = async (): Promise<{ searchResult: SearchResult }> => {
 		const result = await this.feedCollection.findAsync({})
 		
@@ -52,9 +59,7 @@ class MongoFeedRepo implements Repository {
 		}
 	}
 	
-	public update = async (feed: Feed): Promise<NError> => {
-		return null
-	}
+	
 }
 
 export const newMongoFeedRepo = () => {

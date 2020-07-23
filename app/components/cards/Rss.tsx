@@ -128,27 +128,23 @@ const Rss = () => {
 	
 	// TODO: delete me
 	const teste = async () => {
-		console.log('ponto 1')
-		
-		 await state.feedService.create({
-			source: 'https://google.com',
-			description: 'string',
-			category: 'string',
-			sections: [
-				{
-					section_selector: 'string',
-					title_selector: 'string',
-					title_must_contain: 'string',
-					subtitle_selector: 'string',
-					subtitle_must_contain: 'string',
-					url_selector: 'string'
-				}
-			]
-		}).then((value) => {
-			console.log('test: then: ', value)
-		 }).catch((e) => console.log('teste: catch: ', e.message))
-		
-		console.log('ponto Y')
+		//  await state.feedService.create({
+		// 	source: 'https://google.com',
+		// 	description: 'string',
+		// 	category: 'economia',
+		// 	sections: [
+		// 		{
+		// 			section_selector: 'string',
+		// 			title_selector: 'string',
+		// 			title_must_contain: 'string',
+		// 			subtitle_selector: 'string',
+		// 			subtitle_must_contain: 'string',
+		// 			url_selector: 'string'
+		// 		}
+		// 	]
+		// }).then((value) => {
+		// 	console.log('test: then: ', value)
+		//  }).catch((e) => console.log('teste: catch: ', e.message))
 		
 		// // test remove
 		// await state.feedService.delete('https://google.com')
@@ -156,14 +152,49 @@ const Rss = () => {
 		// 	.catch((e) => console.log('test delete: catch: ', e.message))
 		
 		// test find all
-		await state.feedService.findAll()
-			.then((res) => {
-				console.log('test findall: then: ')
-				res.searchResult.feeds?.forEach((v) => {
-					console.log(v)
-				})
+		// await state.feedService.findAll()
+		// 	.then((res) => {
+		// 		console.log('test findall: then: ')
+		// 		res.searchResult.feeds?.forEach((v) => {
+		// 			console.log(v)
+		// 		})
+		// 	})
+		// 	.catch((e) => console.log('test findall: catch: ', e.message))
+		
+		// test update
+		// await state.feedService.update({
+		// 	source: 'https://google.com',
+		// 	description: 'updated',
+		// 	category: 'economia',
+		// 	sections: [
+		// 		{
+		// 			section_selector: 'string',
+		// 			title_selector: 'string',
+		// 			title_must_contain: 'string',
+		// 			subtitle_selector: 'string',
+		// 			subtitle_must_contain: 'string',
+		// 			url_selector: 'string'
+		// 		}
+		// 	]
+		// }).then((res) => console.log('test update: then: ', res))
+		// 	.catch((e) => console.log('test update: catch: ', e.message))
+		
+		// teste create rss
+		await state.rssService.create({
+				source: 'https://google.com',
+				title: 'string',
+				url: 'https://google.com/asdf',
+				category: 'economia',
+				timestamp: Date.now(),
 			})
-			.catch((e) => console.log('test findall: catch: ', e.message))
+			.then((res) => console.log('test create rss: then: ', res))
+			.catch((e) => console.log('test create rss: catch: ', e.message))
+	
+		
+		// teste find rss by category
+		await state.rssService.findAllByCategory('economia')
+			.then((res) => console.log('test find rss by category: then: ', res.searchResult))
+			.catch((e) => console.log('test find rss by category: catch: ', e.message))
 	}
 	
 	return (
