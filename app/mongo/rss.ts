@@ -11,14 +11,14 @@ class MongoRssRepo implements Repository {
 	}
 	
 	public create = async (rss: Rss): Promise<NError> => {
-		const result = await this.rssCollection.updateAsync({ url: rss.url }, rss, { upsert: true })
+		const result = await this.rssCollection.updateAsync({ url: rss.url, category: rss.category }, rss, {})
 		
-		if (result as unknown as number != 1) return new Error('could not create rss')
+		if (result as unknown as number != 1) return new Error('could not update rss')
 		return null
 	}
 	
-	public delete = async (url: string): Promise<NError> =>  {
-		const removed = await this.rssCollection.removeAsync({ url: url }, {})
+	public delete = async (id: string): Promise<NError> =>  {
+		const removed = await this.rssCollection.removeAsync({ _id: id }, {})
 		// erase all this.rssCollection.removeAsync({}, { multi: true })
 		
 		if (removed != 1) return new Error('could not remove rss')

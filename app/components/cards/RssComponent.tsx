@@ -13,62 +13,29 @@ import styles from '../../styles/theme.style'
 import RNPickerSelect from 'react-native-picker-select'
 import { StateContext } from "../../context/Context"
 import { Button } from "react-native-elements";
-
-interface Data {
-	id: string
-	title: string
-	sourceName: string
-	url: string
-}
-
-const DATA = [
-	{
-		id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28ba",
-		title: "Located two hours south of Sydnes in the Southern Highlands of New South asdf asdf asdf asdf asdf asdfas dfaa Wales",
-		sourceName: "economia.estadao.com.br",
-		url: "https://google.com"
-	},
-	{
-		id: "3ac68afc-c605-48d3-a4f8-fbd91aa97f63",
-		title: "Located two hours south of Sydnes in the Southern Highlands of New South   Wales, ...",
-		sourceName: "economia.estadao.com.br",
-		url: "https://google.com"
-	},
-	{
-		id: "58694a0f-3da1-471f-bd96-145571e29d72",
-		title: "Located two hours south of Sydnes in the South Highlands of a new experience...",
-		sourceName: "economia.estadao.com.br",
-		url: "https://google.com"
-	},
-	{
-		id: "58294a0f-3da1-471f-bd96-145571e29d72",
-		title: "Located two hours south of Sydnes in the South Highlands of a new experience...",
-		sourceName: "economia.estadao.com.br",
-		url: "https://google.com"
-	},
-	{
-		id: "52694a0f-3da1-471f-bd96-145571e29d72",
-		title: "Located two hours south of Sydnes in the South Highlands of a new experience...",
-		sourceName: "economia.estadao.com.br",
-		url: "https://google.com"
-	},
-	
-]
+import { Rss } from "../../rss/rss";
 
 export const Dropdown = () => {
 	const { state, actions } = useContext(StateContext)
 	const [selectedCategory, setCategory] = useState('')
 	
-	useEffect(() => {
-		state.feedService.findAllCategories((cats: Array<{[key: string]: string}>) => {
+	useEffect(() => fetchCategoriesAndUpdateDropdown(), [])
+	
+	const fetchCategoriesAndUpdateDropdown = () => {
+		state.feedService.findAllCategories((cats: Array<{ [key: string]: string }>) => {
 			actions.setCategories(cats)
-			if (cats[0]) { setCategory(cats[0].value) }
+			if (cats[0]) setCategory(cats[0].value)
 		})
-	},	[])
+	}
+	
+	const setCurrentCategory = (category: string) => {
+		setCategory(category)
+		actions.setCurrentCategory(category)
+	}
 	
 	return (
 		<RNPickerSelect
-			onValueChange={(value) => setCategory(value)}
+			onValueChange={(category) => setCurrentCategory(category)}
 			 // @ts-ignore
 			items={state.categories}
 			value={selectedCategory}
@@ -96,16 +63,20 @@ export const Dropdown = () => {
 	)
 }
 
-const Item = (item: { item: Data }) => {
+const Item = (item: { item: Rss }) => {
+	const rss = item.item
+	const subtitle = rss.subtitle ? <Text style={feedStyle.subtitle}>{rss.subtitle}</Text> : null
+	
 	return (
 		<View style={feedStyle.itemContainer}>
 			<TouchableOpacity
-				onPress={() => loadInBrowser(item.item.url)}
+				onPress={() => loadInBrowser(rss.url)}
 				style={feedStyle.item}
 				activeOpacity={0.9}
 			>
-				<Text numberOfLines={2} style={feedStyle.title}>{item.item.title}</Text>
-				<Text numberOfLines={1} style={feedStyle.sourceName}>{item.item.sourceName}</Text>
+				<Text style={feedStyle.title}>{rss.title}</Text>
+				{subtitle}
+				<Text numberOfLines={1} style={feedStyle.sourceName}>{rss.source}</Text>
 			</TouchableOpacity>
 			
 			<TouchableOpacity style={{ alignSelf: "center", }} activeOpacity={0.6}>
@@ -119,10 +90,20 @@ const Item = (item: { item: Data }) => {
 	)
 }
 
-const Rss = () => {
+const RssComponent = () => {
 	const { state, actions } = useContext(StateContext)
+	const currentCategoryInitialState: Array<Rss> = []
+	const [currentCategories, setCurrentCategories] = useState(currentCategoryInitialState)
 	
-	const renderItem = (item: { item: Data }) => {
+	useEffect(() => {
+		state.rssService.findAllByCategory(state.currentCategory)
+			.then((res) => {
+				const cats = res.searchResult.rsss ? res.searchResult.rsss : []
+				setCurrentCategories(cats)
+			})
+	}, [state.currentCategory])
+	
+	const renderItem = (item: { item: Rss }) => {
 		return (
 			<Item
 				item={item.item}
@@ -185,18 +166,19 @@ const Rss = () => {
 		// teste create rss
 		await state.rssService.create({
 				source: 'https://google.com',
-				title: 'string',
+				title: 'Notícia de economia',
+				subtitle: 'Teste de subtítulo com mais de uma linha para testar o layout da lista de rss do app de feed personalizado',
 				url: 'https://google.com/asdf',
 				category: 'economia',
 				timestamp: Date.now(),
 			})
-			.then((res) => console.log('test create rss: then: ', res))
-			.catch((e) => console.log('test create rss: catch: ', e.message))
+			.then((res) => console.debug('test create rss: then: ', res))
+			.catch((e) => console.debug('test create rss: catch: ', e.message))
 		
 		// teste find rss by category
 		await state.rssService.findAllByCategory('economia')
-			.then((res) => console.log('test find rss by category: then: ', res.searchResult))
-			.catch((e) => console.log('test find rss by category: catch: ', e.message))
+			.then((res) => console.debug('test find rss by category: then: ', res.searchResult))
+			.catch((e) => console.debug('test find rss by category: catch: ', e.message))
 		
 		// teste find all categories
 		// await state.feedService.findAllCategories(actions.setCategories)
@@ -209,9 +191,9 @@ const Rss = () => {
 			<Dropdown/>
 			
 			<FlatList
-				data={DATA}
+				data={currentCategories}
 				renderItem={renderItem}
-				keyExtractor={(item) => item.id}
+				keyExtractor={(item) => item._id || ''}
 				// extraData={selectedId}
 			/>
 		</SafeAreaView>
@@ -246,6 +228,12 @@ const feedStyle = StyleSheet.create({
 		fontSize: 13,
 		color: '#46494c',
 	},
+	subtitle: {
+		fontSize: 13,
+		color: '#46494c',
+		opacity: 0.6,
+		marginVertical: 3,
+	},
 	sourceName: {
 		color: styles.ORANGE,
 		fontSize: 13,
@@ -257,4 +245,4 @@ const loadInBrowser = (url: string) => {
 	Linking.openURL(url).catch(err => console.error("Couldn't load page", err))
 }
 
-export default Rss
+export default RssComponent

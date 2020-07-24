@@ -7,6 +7,7 @@ import { newMongoRssRepo } from "../mongo/rss";
 export default interface State {
 	screens: Screens
 	categories: Array<{ [key: string]: string }>
+	currentCategory: string
 	feedService: FeedService
 	rssService: RssService
 }
@@ -24,5 +25,6 @@ export const getInitialState = (): State => {
 		feedService: feedService,
 		rssService: rssService,
 		categories: [],
+		currentCategory: '',
 	}
 }

@@ -68,7 +68,7 @@ const Item = (item: { item: Data }) => {
 	)
 }
 
-const Feeds = () => {
+const FeedsComponent = () => {
 	const { state, actions } = useContext(StateContext)
 	
 	const renderItem = (item: { item: Data }) => {
@@ -129,4 +129,4 @@ const loadInBrowser = (url: string) => {
 	Linking.openURL(url).catch(err => console.error("Couldn't load page", err))
 }
 
-export default Feeds
+export default FeedsComponent

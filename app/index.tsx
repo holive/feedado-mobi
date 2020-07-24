@@ -1,9 +1,9 @@
 import 'react-native-gesture-handler'
 import React from 'react'
 import MainWrapper from "./components/MainWrapper"
-import Feeds from "./components/cards/Feeds"
+import FeedsComponent from "./components/cards/FeedsComponent"
 import { Context } from "./context/Context"
-import Rss from "./components/cards/Rss"
+import RssComponent from "./components/cards/RssComponent"
 import NewFeed from './components/cards/NewFeed'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
@@ -21,8 +21,8 @@ export const App = () => {
 				
 				<MainWrapper>
 					<Stack.Navigator initialRouteName={RSS} headerMode='none'>
-						<Stack.Screen name={RSS} component={Rss}/>
-						<Stack.Screen name={FEEDS} component={Feeds}/>
+						<Stack.Screen name={RSS} component={RssComponent}/>
+						<Stack.Screen name={FEEDS} component={FeedsComponent}/>
 						<Stack.Screen name={NEW_FEED} component={NewFeed}/>
 					</Stack.Navigator>
 				</MainWrapper>

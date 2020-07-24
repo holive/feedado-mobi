@@ -9,6 +9,7 @@ export const StateContext = React.createContext(
 		actions: {
 			setScreens: (screen: { [key: string]: boolean }) => {},
 			setCategories: (categories: Array<{ [key: string]: string }>) => {},
+			setCurrentCategory: (category: string) => {}
 		}
 	}
 )
@@ -24,6 +25,7 @@ export const Context = (props: { children: React.ReactNode }) => {
 	const actions = {
 		setScreens: setScreens.bind(null, state, setState),
 		setCategories: setCategories.bind(null, state, setState),
+		setCurrentCategory: setCurrentCategory.bind(null, state, setState),
 	}
 	
 	return (
@@ -35,6 +37,10 @@ export const Context = (props: { children: React.ReactNode }) => {
 
 const setCategories = (state: State, setState: Function, categories: Array<{ [key: string]: string }>) => {
 	setState({ categories: categories })
+}
+
+const setCurrentCategory = (state: State, setState: Function, category: string) => {
+	setState({ currentCategory: category })
 }
 
 export default interface Screens {
