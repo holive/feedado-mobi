@@ -7,4 +7,5 @@ export interface Repository {
 	delete: (source: string) => Promise<NError>
 	findBySource: (source: string) => Promise<{ feed: Feed, error: NError }>
 	findAll: () => Promise<{ searchResult: SearchResult }>
+	findAllCategories: (setCategories: (categories: Array<{ [key: string]: string }>) => void) => void
 }

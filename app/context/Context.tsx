@@ -1,5 +1,4 @@
 import React, { useState } from "react"
-import { setScreens } from "./screensState"
 import State, { getInitialState } from "./state"
 
 const initialState = getInitialState()
@@ -9,6 +8,7 @@ export const StateContext = React.createContext(
 		state: initialState,
 		actions: {
 			setScreens: (screen: { [key: string]: boolean }) => {},
+			setCategories: (categories: Array<{ [key: string]: string }>) => {},
 		}
 	}
 )
@@ -23,6 +23,7 @@ export const Context = (props: { children: React.ReactNode }) => {
 	
 	const actions = {
 		setScreens: setScreens.bind(null, state, setState),
+		setCategories: setCategories.bind(null, state, setState),
 	}
 	
 	return (
@@ -30,4 +31,24 @@ export const Context = (props: { children: React.ReactNode }) => {
 			{props.children}
 		</StateContext.Provider>
 	)
+}
+
+const setCategories = (state: State, setState: Function, categories: Array<{ [key: string]: string }>) => {
+	setState({ categories: categories })
+}
+
+export default interface Screens {
+	feeds: boolean
+	schemas: boolean
+	newSchema: boolean
+}
+
+const setScreens = (state: State, setState: Function, screen: { [key: string]: boolean }) => {
+	const newScreenState: Screens = {
+		feeds: false,
+		schemas: false,
+		newSchema: false,
+	}
+	
+	setState({ screens: { ...newScreenState, ...screen } })
 }

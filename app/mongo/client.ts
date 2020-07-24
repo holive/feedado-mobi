@@ -1,5 +1,11 @@
 import AsyncStorage from '@react-native-community/async-storage'
-import { Query, MongoDocument, RemoveOptions, UpdateOptions } from 'react-native-local-mongodb'
+import {
+	Query,
+	MongoDocument,
+	RemoveOptions,
+	UpdateOptions,
+	Projection, Callback
+} from 'react-native-local-mongodb'
 
 const Datastore = require('react-native-local-mongodb')
 
@@ -13,4 +19,5 @@ export interface MongoDataStore {
 	insertAsync: (newDoc: MongoDocument) => Promise<MongoDocument>
 	updateAsync: (query: Query, doc: MongoDocument, options?: UpdateOptions) => Promise<MongoDocument>
 	removeAsync: (query: Query, options?: RemoveOptions) => Promise<number>
+	find: (query: Query, projection: Projection, callback: Callback<MongoDocument[]>) => void
 }

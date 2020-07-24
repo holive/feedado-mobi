@@ -59,7 +59,16 @@ class MongoFeedRepo implements Repository {
 		}
 	}
 	
-	
+	public findAllCategories = (setCategories: (categories: Array<{ [key: string]: string }>) => void) => {
+		this.feedCollection.find({}, { _id: 0, category: 1 }, (err, docs) => {
+			if (err?.message) console.warn(err)
+			
+			let result: Array<{ [key: string]: string }> = []
+			docs.forEach((v) => result.push({ label: v.category.toUpperCase(), value: v.category}))
+			
+			setCategories(result)
+		})
+	}
 }
 
 export const newMongoFeedRepo = () => {

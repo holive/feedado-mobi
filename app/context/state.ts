@@ -1,4 +1,4 @@
-import Screens from "./screensState"
+import Screens from "./Context"
 import FeedService from "../feed/service"
 import RssService from "../rss/service"
 import { newMongoFeedRepo } from "../mongo/feed";
@@ -6,6 +6,7 @@ import { newMongoRssRepo } from "../mongo/rss";
 
 export default interface State {
 	screens: Screens
+	categories: Array<{ [key: string]: string }>
 	feedService: FeedService
 	rssService: RssService
 }
@@ -22,5 +23,6 @@ export const getInitialState = (): State => {
 		},
 		feedService: feedService,
 		rssService: rssService,
+		categories: [],
 	}
 }

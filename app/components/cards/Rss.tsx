@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import {
 	FlatList,
 	Linking,
@@ -55,18 +55,22 @@ const DATA = [
 	
 ]
 
-const categories = [
-	{ label: 'ECONOMIA', value: 'economia' },
-	{ label: 'TECNOLOGIA', value: 'tecnologia' },
-]
-
 export const Dropdown = () => {
-	const [selectedCategory, setCategory] = useState(categories[0].value)
+	const { state, actions } = useContext(StateContext)
+	const [selectedCategory, setCategory] = useState('')
+	
+	useEffect(() => {
+		state.feedService.findAllCategories((cats: Array<{[key: string]: string}>) => {
+			actions.setCategories(cats)
+			if (cats[0]) { setCategory(cats[0].value) }
+		})
+	},	[])
 	
 	return (
 		<RNPickerSelect
 			onValueChange={(value) => setCategory(value)}
-			items={categories}
+			 // @ts-ignore
+			items={state.categories}
 			value={selectedCategory}
 			style={{
 				inputAndroid: {
@@ -126,12 +130,11 @@ const Rss = () => {
 		)
 	}
 	
-	// TODO: delete me
 	const teste = async () => {
 		//  await state.feedService.create({
-		// 	source: 'https://google.com',
+		// 	source: 'https://google.com.br',
 		// 	description: 'string',
-		// 	category: 'economia',
+		// 	category: 'politica',
 		// 	sections: [
 		// 		{
 		// 			section_selector: 'string',
@@ -189,17 +192,19 @@ const Rss = () => {
 			})
 			.then((res) => console.log('test create rss: then: ', res))
 			.catch((e) => console.log('test create rss: catch: ', e.message))
-	
 		
 		// teste find rss by category
 		await state.rssService.findAllByCategory('economia')
 			.then((res) => console.log('test find rss by category: then: ', res.searchResult))
 			.catch((e) => console.log('test find rss by category: catch: ', e.message))
+		
+		// teste find all categories
+		// await state.feedService.findAllCategories(actions.setCategories)
 	}
 	
 	return (
 		<SafeAreaView style={feedStyle.container}>
-			<Button onPress={async () => await teste()}>teste</Button>
+			<Button onPress={() => teste()}>teste</Button>
 			
 			<Dropdown/>
 			

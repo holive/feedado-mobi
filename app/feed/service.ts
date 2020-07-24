@@ -39,6 +39,10 @@ class FeedService {
 		return this.repo.findBySource(source)
 	}
 	
+	public findAllCategories = async (setCategories: (categories: Array<{ [key: string]: string }>) => void): Promise<void> => {
+		this.repo.findAllCategories(setCategories)
+	}
+	
 	private validateURL = (source: string): boolean => {
 		let url
 		try {
