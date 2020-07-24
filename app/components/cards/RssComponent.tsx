@@ -8,12 +8,13 @@ import {
 	TouchableOpacity,
 	View
 } from "react-native"
+import * as Animatable from 'react-native-animatable';
 import Icon from "react-native-vector-icons/MaterialIcons"
 import styles from '../../styles/theme.style'
 import RNPickerSelect from 'react-native-picker-select'
 import { StateContext } from "../../context/Context"
-import { Button } from "react-native-elements";
-import { Rss } from "../../rss/rss";
+import { Button } from "react-native-elements"
+import { Rss } from "../../rss/rss"
 
 export const Dropdown = () => {
 	const { state, actions } = useContext(StateContext)
@@ -29,6 +30,7 @@ export const Dropdown = () => {
 	}
 	
 	const setCurrentCategory = (category: string) => {
+		if (!category) return
 		setCategory(category)
 		actions.setCurrentCategory(category)
 	}
@@ -63,50 +65,89 @@ export const Dropdown = () => {
 	)
 }
 
-const Item = (item: { item: Rss }) => {
-	const rss = item.item
+const animationDuration = 500
+
+const AnimatableFade = ({isVisible, children}: { isVisible: boolean, children: React.ReactNode }) => {
+	if (isVisible) return <View>{children}</View>
+	
+	return (
+		<Animatable.View
+			duration={animationDuration}
+			animation='fadeOutRightBig'
+			style={[
+				{opacity: isVisible ? 1.0 : 0.0},
+			]}
+			useNativeDriver={true}
+		>
+			{children}
+		</Animatable.View>
+	);
+}
+
+const Item = (props: { item: Rss, currentRssList: Array<Rss>, setCurrentRssList: Function }) => {
+	const { state, actions } = useContext(StateContext)
+	const [isVisible, setVisibility] = useState(true)
+	
+	const removeRss = (id: string) => {
+		setVisibility(false)
+		
+		setTimeout(() => {
+			state.rssService.delete(id).then(() => {
+				const updatedList = props.currentRssList.filter((v, i) => v._id !== id)
+				props.setCurrentRssList(updatedList)
+			})
+		}, animationDuration * 0.5)
+	}
+	
+	const rss = props.item
 	const subtitle = rss.subtitle ? <Text style={feedStyle.subtitle}>{rss.subtitle}</Text> : null
 	
 	return (
-		<View style={feedStyle.itemContainer}>
-			<TouchableOpacity
-				onPress={() => loadInBrowser(rss.url)}
-				style={feedStyle.item}
-				activeOpacity={0.9}
-			>
-				<Text style={feedStyle.title}>{rss.title}</Text>
-				{subtitle}
-				<Text numberOfLines={1} style={feedStyle.sourceName}>{rss.source}</Text>
-			</TouchableOpacity>
-			
-			<TouchableOpacity style={{ alignSelf: "center", }} activeOpacity={0.6}>
-				<Icon
-					name="remove-circle"
-					style={feedStyle.icon}
-					// onPress={() => console.log('refresh')}
-				/>
-			</TouchableOpacity>
-		</View>
+		<AnimatableFade isVisible={isVisible}>
+			<View style={feedStyle.itemContainer}>
+				<TouchableOpacity
+					onPress={() => loadInBrowser(rss.url)}
+					style={feedStyle.item}
+					activeOpacity={0.9}
+				>
+					
+					<Text style={feedStyle.title}>{rss.title}</Text>
+					{subtitle}
+					<Text numberOfLines={1} style={feedStyle.sourceName}>{rss.source}</Text>
+				
+				</TouchableOpacity>
+				
+				
+					<Icon
+						name="remove-circle"
+						style={feedStyle.icon}
+						onPress={() => removeRss(rss._id || '')}
+					/>
+				
+			</View>
+		</AnimatableFade>
 	)
 }
 
 const RssComponent = () => {
 	const { state, actions } = useContext(StateContext)
-	const currentCategoryInitialState: Array<Rss> = []
-	const [currentCategories, setCurrentCategories] = useState(currentCategoryInitialState)
+	const rssListInitialState: Array<Rss> = []
+	const [currentRssList, setCurrentRssList] = useState(rssListInitialState)
 	
 	useEffect(() => {
 		state.rssService.findAllByCategory(state.currentCategory)
 			.then((res) => {
-				const cats = res.searchResult.rsss ? res.searchResult.rsss : []
-				setCurrentCategories(cats)
+				const rsss = res.searchResult.rsss ? res.searchResult.rsss : []
+				setCurrentRssList(rsss)
 			})
 	}, [state.currentCategory])
 	
-	const renderItem = (item: { item: Rss }) => {
+	const renderItem = (props: { item: Rss }) => {
 		return (
 			<Item
-				item={item.item}
+				item={props.item}
+			    currentRssList={currentRssList}
+			    setCurrentRssList={setCurrentRssList}
 			/>
 		)
 	}
@@ -168,7 +209,7 @@ const RssComponent = () => {
 				source: 'https://google.com',
 				title: 'Notícia de economia',
 				subtitle: 'Teste de subtítulo com mais de uma linha para testar o layout da lista de rss do app de feed personalizado',
-				url: 'https://google.com/asdf',
+				url: 'https://google.com/a',
 				category: 'economia',
 				timestamp: Date.now(),
 			})
@@ -191,10 +232,9 @@ const RssComponent = () => {
 			<Dropdown/>
 			
 			<FlatList
-				data={currentCategories}
+				data={currentRssList}
 				renderItem={renderItem}
 				keyExtractor={(item) => item._id || ''}
-				// extraData={selectedId}
 			/>
 		</SafeAreaView>
 	)
@@ -223,6 +263,7 @@ const feedStyle = StyleSheet.create({
 	icon: {
 		color: "#ddd",
 		fontSize: 20,
+		alignSelf: 'center',
 	},
 	title: {
 		fontSize: 13,

@@ -11,7 +11,7 @@ class MongoRssRepo implements Repository {
 	}
 	
 	public create = async (rss: Rss): Promise<NError> => {
-		const result = await this.rssCollection.updateAsync({ url: rss.url, category: rss.category }, rss, {})
+		const result = await this.rssCollection.updateAsync({ url: rss.url, category: rss.category }, rss, { upsert: true })
 		
 		if (result as unknown as number != 1) return new Error('could not update rss')
 		return null

@@ -14,8 +14,8 @@ class RssService {
 		return await this.repo.create(rss)
 	}
 	
-	public delete = async (url: string): Promise<NError> => {
-		return await this.repo.delete(url)
+	public delete = async (id: string): Promise<NError> => {
+		return await this.repo.delete(id)
 	}
 	
 	public findAll = async (): Promise<{ searchResult: SearchResult }> => {
