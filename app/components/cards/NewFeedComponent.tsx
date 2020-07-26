@@ -3,7 +3,7 @@ import { ScrollView, StyleSheet, Text, View } from "react-native"
 import { StateContext } from "../../context/Context"
 import { Feed, Section } from "../../feed/feed"
 import { Input } from "react-native-elements";
-import AddRemoveSchemaSection from "../icons/AddSchemaSection";
+import { AddSchemaSection, RemoveSchemaSection } from "../icons/IconsSchemaSection";
 
 export const newSchemaScreenInitialState: Feed = {
 	source: '',
@@ -86,45 +86,67 @@ const NewSchemaInput = (props: any) => {
 			inputStyle={newSchemaStyles.input}
 			inputContainerStyle={newSchemaStyles.inputContainer}
 			containerStyle={newSchemaStyles.containerStyle}
-			onChangeText={(value) => props.onChange(props.label, value)}
+			onChangeText={(value) => props.onChange(props.name, value)}
 		/>
 	)
 }
 
-const Sections = (props: { handleChanges: (index: number, section: Section) => {}}) => {
+const Sections = (props: {
+	handleChanges: (index: number, section: Section) => void,
+	removeSection: (index: number) => void
+}) => {
 	const { state, actions } = useContext(StateContext)
 	const sectionsArray = Array.from(state.newSchemaScreen.sections)
 	
-	const addSection = () => {
+	const addEmptySection = () => {
 		props.handleChanges(sectionsArray.length, newEmptySection)
+	}
+	
+	const handleSectionChange = (index: number, fieldName: string, value: string) => {
+		actions.handleNewScreenSectionFields(index, fieldName, value)
+	}
+	
+	const deleteSection = (index: number) => {
+		props.removeSection(index)
 	}
 	
 	return (
 		<View style={sectionsStyles.container}>
-			{sectionsArray.map(v => RenderSection(v[0], v[1]))}
+			{sectionsArray.map(v => RenderSection(v[0], v[1], handleSectionChange, deleteSection))}
 			
-			<AddRemoveSchemaSection callback={addSection}/>
+			<AddSchemaSection callback={addEmptySection}/>
 		</View>
 	)
 }
 
-const RenderSection = (index: number, section: Section) => {
-	console.log(index, section)
+const RenderSection = (index: number,
+                       section: Section,
+                       handleChange: (index: number, fieldName: string, value: string) => void,
+                       deleteSection: (index: number) => void
+) => {
+	const onChange = (name: string, value: string) => {
+		handleChange(index, name, value)
+	}
+	
+	const remove = () => {
+		deleteSection(index)
+	}
+	
 	return (
 		<View style={sectionsStyles.section} key={index}>
-			<NewSchemaInput value={section.section_selector} label="Section selector" placeholder='.row.management section'/>
-			<NewSchemaInput value={section.title_selector} label="Title selector" placeholder='.text-wrapper h3'/>
-			<NewSchemaInput value={section.title_must_contain} label="Title must contain (optional)" placeholder='covid'/>
-			<NewSchemaInput value={section.subtitle_selector} label="Subtitle selector (optional)" placeholder='.text-wrapper p'/>
-			<NewSchemaInput value={section.subtitle_must_contain} label="Subtitle must contain (optional)" placeholder=''/>
-			<NewSchemaInput value={section.url_selector} label="URL selector" placeholder='a'/>
+			<RemoveSchemaSection callback={remove} />
+			<NewSchemaInput onChange={onChange} name="section_selector" value={section.section_selector} label="Section selector" placeholder='.row.management section'/>
+			<NewSchemaInput onChange={onChange} name="title_selector" value={section.title_selector} label="Title selector" placeholder='.text-wrapper h3'/>
+			<NewSchemaInput onChange={onChange} name="title_must_contain" value={section.title_must_contain} label="Title must contain (optional)" placeholder='covid'/>
+			<NewSchemaInput onChange={onChange} name="subtitle_selector" value={section.subtitle_selector} label="Subtitle selector (optional)" placeholder='.text-wrapper p'/>
+			<NewSchemaInput onChange={onChange} name="subtitle_must_contain" value={section.subtitle_must_contain} label="Subtitle must contain (optional)" placeholder=''/>
+			<NewSchemaInput onChange={onChange} name="url_selector" value={section.url_selector} label="URL selector" placeholder='a'/>
 		</View>
 	)
 }
 
 export default () => {
 	const { state, actions } = useContext(StateContext)
-	// const [schema, setSchema] = useState(newSchemaScreenInitialState)
 	
 	const handleChanges = (label: string, value: string | Object) => {
 		actions.setNewSchemaScreen({...state.newSchemaScreen, [label.toLowerCase()]: value})
@@ -139,19 +161,35 @@ export default () => {
 		handleChanges('sections', newSchema)
 	}
 	
+	const removeSection = (index: number) => {
+		const newSchema = new Map<number, Section>()
+		Array.from(state.newSchemaScreen.sections).map((v, i) => {
+			if (index != v[0]) {
+				newSchema.set(v[0], v[1])
+			}
+		})
+		
+		if (state.newSchemaScreen.sections.size === 1) return
+		
+		handleChanges('sections', newSchema)
+	}
+	
 	return (
 		<ScrollView style={newSchemaStyles.container}>
 			<NewSchemaInput
+				name="source"
 				label="Source"
 				placeholder='https://www.nytimes.com/'
 				onChange={handleChanges}
 				value={state.newSchemaScreen.source}/>
 			<NewSchemaInput
+				name="description"
 				label="Description"
 				placeholder='Times front page'
 				onChange={handleChanges}
 				value={state.newSchemaScreen.description}/>
 			<NewSchemaInput
+				name="category"
 				label="Category"
 				placeholder='economy'
 				onChange={handleChanges}
@@ -159,7 +197,7 @@ export default () => {
 			
 			<Text style={newSchemaStyles.sectionsTitle}>Sections</Text>
 			
-			<Sections handleChanges={handleSectionsChanges}/>
+			<Sections handleChanges={handleSectionsChanges} removeSection={removeSection}/>
 		</ScrollView>
 	)
 }

@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import State, { getInitialState } from "./state"
-import { Feed } from "../feed/feed";
+import { Feed, Section } from "../feed/feed";
 
 const initialState = getInitialState()
 
@@ -12,6 +12,7 @@ export const StateContext = React.createContext(
 			setCategories: (categories: Array<{ [key: string]: string }>) => {},
 			setCurrentCategory: (category: string) => {},
 			setNewSchemaScreen: (schema: Feed) => {},
+			handleNewScreenSectionFields: (index: number, fieldName: string, value: string) => {},
 		}
 	}
 )
@@ -28,7 +29,8 @@ export const Context = (props: { children: React.ReactNode }) => {
 		setScreens: setScreens.bind(null, state, setState),
 		setCategories: setCategories.bind(null, state, setState),
 		setCurrentCategory: setCurrentCategory.bind(null, state, setState),
-		setNewSchemaScreen: setNewSchemaScreen.bind(null, state, setState)
+		setNewSchemaScreen: setNewSchemaScreen.bind(null, state, setState),
+		handleNewScreenSectionFields: handleNewScreenSectionFields.bind(null, state, setState),
 	}
 	
 	return (
@@ -48,6 +50,16 @@ const setCurrentCategory = (state: State, setState: Function, category: string) 
 
 const setNewSchemaScreen = (state: State, setState: Function, schema: Feed) => {
 	setState({ newSchemaScreen: schema })
+}
+
+const handleNewScreenSectionFields = (state: State, setState: Function, index: number, fieldName: string, value: string) => {
+	const newState = { ...state }
+	const newSection = newState.newSchemaScreen.sections.get(index) as Section
+	// @ts-ignore
+	newSection[fieldName] = value
+	
+	newState.newSchemaScreen.sections.set(index, newSection)
+	setState(newState)
 }
 
 export default interface Screens {

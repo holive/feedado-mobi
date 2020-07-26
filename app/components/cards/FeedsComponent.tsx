@@ -14,7 +14,6 @@ import { Rss } from "../../rss/rss";
 import { Feed } from "../../feed/feed";
 
 const Item = (props: { item: Feed, currentFeedList: Array<Feed>, setCurrentFeedList: Function }) => {
-	const { state, actions } = useContext(StateContext)
 	const f = props.item
 	
 	return (
