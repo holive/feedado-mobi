@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import {
 	FlatList,
 	Linking,
@@ -10,49 +10,13 @@ import {
 } from "react-native"
 import styles from '../../styles/theme.style'
 import { StateContext } from "../../context/Context"
+import { Rss } from "../../rss/rss";
+import { Feed } from "../../feed/feed";
 
-interface Data {
-	id: string
-	description: string
-	category: string
-	sourceName: string
-}
-
-const DATA = [
-	{
-		id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28ba",
-		description: "Located two hours south of Sydnes in the Southern Highlands of New South asdf asdf asdf asdf asdf asdfas dfaa Wales",
-		category: "economia",
-		sourceName: "economia.estadao.com.br",
-	},
-	{
-		id: "3ac68afc-c605-48d3-a4f8-fbd91aa97f63",
-		description: "Located two hours south of Sydnes in the Southern Highlands of New South   Wales, ...",
-		category: "economia",
-		sourceName: "economia.estadao.com.br",
-	},
-	{
-		id: "58694a0f-3da1-471f-bd96-145571e29d72",
-		description: "Located two hours south of Sydnes in the South Highlands of a new experience...",
-		category: "economia",
-		sourceName: "economia.estadao.com.br",
-	},
-	{
-		id: "58294a0f-3da1-471f-bd96-145571e29d72",
-		description: "Located two hours south of Sydnes in the South Highlands of a new experience...",
-		category: "economia",
-		sourceName: "economia.estadao.com.br",
-	},
-	{
-		id: "52694a0f-3da1-471f-bd96-145571e29d72",
-		description: "Located two hours south of Sydnes in the South Highlands of a new experience...",
-		sourceName: "economia.estadao.com.br",
-		category: "economia",
-	},
+const Item = (props: { item: Feed, currentFeedList: Array<Feed>, setCurrentFeedList: Function }) => {
+	const { state, actions } = useContext(StateContext)
+	const f = props.item
 	
-]
-
-const Item = (item: { item: Data }) => {
 	return (
 		<View style={schemaStyle.itemContainer}>
 			<TouchableOpacity
@@ -60,9 +24,9 @@ const Item = (item: { item: Data }) => {
 				style={schemaStyle.item}
 				activeOpacity={0.9}
 			>
-				<Text numberOfLines={1} style={schemaStyle.sourceName}>{item.item.sourceName}</Text>
-				<Text numberOfLines={1} style={schemaStyle.description}>{item.item.description}</Text>
-				<Text numberOfLines={1} style={schemaStyle.category}>{item.item.category}</Text>
+				<Text numberOfLines={1} style={schemaStyle.sourceName}>{f.source}</Text>
+				<Text numberOfLines={1} style={schemaStyle.description}>{f.description}</Text>
+				<Text numberOfLines={1} style={schemaStyle.category}>{f.category}</Text>
 			</TouchableOpacity>
 		</View>
 	)
@@ -70,11 +34,23 @@ const Item = (item: { item: Data }) => {
 
 const FeedsComponent = () => {
 	const { state, actions } = useContext(StateContext)
+	const feedListInitialState: Array<Feed> = []
+	const [currentFeedList, setCurrentFeedList] = useState(feedListInitialState)
 	
-	const renderItem = (item: { item: Data }) => {
+	useEffect(() => {
+		state.feedService.findAll()
+			.then((res) => {
+				const feeds = res.searchResult.feeds ? res.searchResult.feeds : []
+				setCurrentFeedList(feeds)
+			})
+	}, [])
+	
+	const renderItem = (props: { item: Feed }) => {
 		return (
 			<Item
-				item={item.item}
+				item={props.item}
+				currentFeedList={currentFeedList}
+				setCurrentFeedList={setCurrentFeedList}
 			/>
 		)
 	}
@@ -82,9 +58,9 @@ const FeedsComponent = () => {
 	return (
 		<SafeAreaView style={schemaStyle.container}>
 			<FlatList
-				data={DATA}
+				data={currentFeedList}
 				renderItem={renderItem}
-				keyExtractor={(item) => item.id}
+				keyExtractor={(item) => item._id || ''}
 			/>
 		</SafeAreaView>
 	)
@@ -105,7 +81,9 @@ const schemaStyle = StyleSheet.create({
 		marginHorizontal: 16,
 		backgroundColor: '#fff',
 		borderRadius: 3,
+		flex: 1,
 		marginBottom: 8,
+		
 		elevation: 0.5,
 	},
 	description: {
@@ -124,9 +102,5 @@ const schemaStyle = StyleSheet.create({
 		textTransform: "uppercase",
 	}
 })
-
-const loadInBrowser = (url: string) => {
-	Linking.openURL(url).catch(err => console.error("Couldn't load page", err))
-}
 
 export default FeedsComponent

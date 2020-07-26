@@ -1,5 +1,6 @@
 import React, { useState } from "react"
 import State, { getInitialState } from "./state"
+import { Feed } from "../feed/feed";
 
 const initialState = getInitialState()
 
@@ -9,7 +10,8 @@ export const StateContext = React.createContext(
 		actions: {
 			setScreens: (screen: { [key: string]: boolean }) => {},
 			setCategories: (categories: Array<{ [key: string]: string }>) => {},
-			setCurrentCategory: (category: string) => {}
+			setCurrentCategory: (category: string) => {},
+			setNewSchemaScreen: (schema: Feed) => {},
 		}
 	}
 )
@@ -26,6 +28,7 @@ export const Context = (props: { children: React.ReactNode }) => {
 		setScreens: setScreens.bind(null, state, setState),
 		setCategories: setCategories.bind(null, state, setState),
 		setCurrentCategory: setCurrentCategory.bind(null, state, setState),
+		setNewSchemaScreen: setNewSchemaScreen.bind(null, state, setState)
 	}
 	
 	return (
@@ -41,6 +44,10 @@ const setCategories = (state: State, setState: Function, categories: Array<{ [ke
 
 const setCurrentCategory = (state: State, setState: Function, category: string) => {
 	setState({ currentCategory: category })
+}
+
+const setNewSchemaScreen = (state: State, setState: Function, schema: Feed) => {
+	setState({ newSchemaScreen: schema })
 }
 
 export default interface Screens {

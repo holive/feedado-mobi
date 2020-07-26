@@ -10,6 +10,20 @@ Icon.loadFont()
 export const RightIconHeader = () => {
 	const { state, actions } = useContext(StateContext)
 	
+	if (state.screens.newSchema) {
+		return (
+			<Icon
+				name="save"
+				size={24}
+				color="#FFF"
+				onPress={() => {
+					RootNavigation.navigate(NEW_FEED, null)
+					actions.setScreens({ newSchema: true })
+				}}
+			/>
+		)
+	}
+	
 	if (state.screens.schemas) {
 		return (
 			<Icon

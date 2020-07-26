@@ -3,6 +3,8 @@ import FeedService from "../feed/service"
 import RssService from "../rss/service"
 import { newMongoFeedRepo } from "../mongo/feed";
 import { newMongoRssRepo } from "../mongo/rss";
+import { Feed } from "../feed/feed";
+import { newSchemaScreenInitialState } from "../components/cards/NewFeedComponent";
 
 export default interface State {
 	screens: Screens
@@ -10,6 +12,7 @@ export default interface State {
 	currentCategory: string
 	feedService: FeedService
 	rssService: RssService
+	newSchemaScreen: Feed
 }
 
 export const getInitialState = (): State => {
@@ -26,5 +29,6 @@ export const getInitialState = (): State => {
 		rssService: rssService,
 		categories: [],
 		currentCategory: '',
+		newSchemaScreen: newSchemaScreenInitialState,
 	}
 }

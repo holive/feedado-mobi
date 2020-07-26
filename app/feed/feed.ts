@@ -8,10 +8,11 @@ export interface Section {
 }
 
 export interface Feed {
+	_id?: string
 	source: string
 	description: string
 	category: string
-	sections: Array<Section>
+	sections: Map<number, Section>
 }
 
 export interface SearchResult {

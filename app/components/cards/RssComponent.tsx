@@ -176,15 +176,15 @@ const RssComponent = () => {
 		// 	.then((res) => console.log('test delete: then: ', res))
 		// 	.catch((e) => console.log('test delete: catch: ', e.message))
 		
-		// test find all
-		// await state.feedService.findAll()
-		// 	.then((res) => {
-		// 		console.log('test findall: then: ')
-		// 		res.searchResult.feeds?.forEach((v) => {
-		// 			console.log(v)
-		// 		})
-		// 	})
-		// 	.catch((e) => console.log('test findall: catch: ', e.message))
+		// test find all feeds
+		await state.feedService.findAll()
+			.then((res) => {
+				console.log('test findall: then: ')
+				res.searchResult.feeds?.forEach((v) => {
+					console.log(v)
+				})
+			})
+			.catch((e) => console.log('test findall: catch: ', e.message))
 		
 		// test update
 		// await state.feedService.update({
@@ -205,21 +205,21 @@ const RssComponent = () => {
 		// 	.catch((e) => console.log('test update: catch: ', e.message))
 		
 		// teste create rss
-		await state.rssService.create({
-				source: 'https://google.com',
-				title: 'Notícia de economia',
-				subtitle: 'Teste de subtítulo com mais de uma linha para testar o layout da lista de rss do app de feed personalizado',
-				url: 'https://google.com/a',
-				category: 'economia',
-				timestamp: Date.now(),
-			})
-			.then((res) => console.debug('test create rss: then: ', res))
-			.catch((e) => console.debug('test create rss: catch: ', e.message))
+		// await state.rssService.create({
+		// 		source: 'https://google.com',
+		// 		title: 'Notícia de economia',
+		// 		subtitle: 'Teste de subtítulo com mais de uma linha para testar o layout da lista de rss do app de feed personalizado',
+		// 		url: 'https://google.com/a',
+		// 		category: 'economia',
+		// 		timestamp: Date.now(),
+		// 	})
+		// 	.then((res) => console.debug('test create rss: then: ', res))
+		// 	.catch((e) => console.debug('test create rss: catch: ', e.message))
 		
 		// teste find rss by category
-		await state.rssService.findAllByCategory('economia')
-			.then((res) => console.debug('test find rss by category: then: ', res.searchResult))
-			.catch((e) => console.debug('test find rss by category: catch: ', e.message))
+		// await state.rssService.findAllByCategory('economia')
+		// 	.then((res) => console.debug('test find rss by category: then: ', res.searchResult))
+		// 	.catch((e) => console.debug('test find rss by category: catch: ', e.message))
 		
 		// teste find all categories
 		// await state.feedService.findAllCategories(actions.setCategories)

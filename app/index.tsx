@@ -4,7 +4,7 @@ import MainWrapper from "./components/MainWrapper"
 import FeedsComponent from "./components/cards/FeedsComponent"
 import { Context } from "./context/Context"
 import RssComponent from "./components/cards/RssComponent"
-import NewFeed from './components/cards/NewFeed'
+import NewFeed from './components/cards/NewFeedComponent'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 import { FEEDS, NEW_FEED, RSS } from "./variables"
