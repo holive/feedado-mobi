@@ -12,8 +12,10 @@ export interface Feed {
 	source: string
 	description: string
 	category: string
-	sections: Map<number, Section>
+	sections: SectionsType
 }
+
+export type SectionsType = Map<number, Section>
 
 export interface SearchResult {
 	feeds: Array<Feed> | null

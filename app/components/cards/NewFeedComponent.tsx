@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react"
+import React, { useContext } from "react"
 import { ScrollView, StyleSheet, Text, View } from "react-native"
 import { StateContext } from "../../context/Context"
 import { Feed, Section } from "../../feed/feed"
@@ -91,28 +91,27 @@ const NewSchemaInput = (props: any) => {
 	)
 }
 
-const Sections = (props: { schema: Feed, setSchema: Function }) => {
+const Sections = (props: { handleChanges: (index: number, section: Section) => {}}) => {
+	const { state, actions } = useContext(StateContext)
+	const sectionsArray = Array.from(state.newSchemaScreen.sections)
+	
 	const addSection = () => {
-		const newSchema = {...props.schema}
-		newSchema.sections.set(newSchema.sections.size, newEmptySection)
-		props.setSchema(newSchema)
+		props.handleChanges(sectionsArray.length, newEmptySection)
 	}
 	
 	return (
 		<View style={sectionsStyles.container}>
-			{Array.from(props.schema.sections).map(RenderSection)}
+			{sectionsArray.map(v => RenderSection(v[0], v[1]))}
 			
 			<AddRemoveSchemaSection callback={addSection}/>
 		</View>
 	)
 }
 
-const RenderSection = (section: Section, index: number) => {
-	console.log('render section: ', section, index)
-	
+const RenderSection = (index: number, section: Section) => {
+	console.log(index, section)
 	return (
 		<View style={sectionsStyles.section} key={index}>
-			<Text>asdf</Text>
 			<NewSchemaInput value={section.section_selector} label="Section selector" placeholder='.row.management section'/>
 			<NewSchemaInput value={section.title_selector} label="Title selector" placeholder='.text-wrapper h3'/>
 			<NewSchemaInput value={section.title_must_contain} label="Title must contain (optional)" placeholder='covid'/>
@@ -125,14 +124,19 @@ const RenderSection = (section: Section, index: number) => {
 
 export default () => {
 	const { state, actions } = useContext(StateContext)
-	const [schema, setSchema] = useState(newSchemaScreenInitialState)
+	// const [schema, setSchema] = useState(newSchemaScreenInitialState)
 	
-	const handleChanges = (label: string, text: string | Object) => {
-		actions.setNewSchemaScreen({...state.newSchemaScreen, [label.toLowerCase()]: text})
+	const handleChanges = (label: string, value: string | Object) => {
+		actions.setNewSchemaScreen({...state.newSchemaScreen, [label.toLowerCase()]: value})
 	}
 	
-	const handleSectionsChanges = (section: Section) => {
-		// hadle
+	const handleSectionsChanges = (position: number, section: Section) => {
+		const newSchema = new Map<number, Section>()
+		Array.from(state.newSchemaScreen.sections).map((v, i) => newSchema.set(v[0], v[1]))
+		
+		newSchema.set(position, section)
+		
+		handleChanges('sections', newSchema)
 	}
 	
 	return (
@@ -155,7 +159,7 @@ export default () => {
 			
 			<Text style={newSchemaStyles.sectionsTitle}>Sections</Text>
 			
-			<Sections schema={schema} setSchema={setSchema}/>
+			<Sections handleChanges={handleSectionsChanges}/>
 		</ScrollView>
 	)
 }
