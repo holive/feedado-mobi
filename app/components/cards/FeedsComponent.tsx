@@ -12,14 +12,23 @@ import styles from '../../styles/theme.style'
 import { StateContext } from "../../context/Context"
 import { Rss } from "../../rss/rss";
 import { Feed } from "../../feed/feed";
+import * as RootNavigation from "../../routes/RootNavigation";
+import { NEW_FEED } from "../../variables";
 
 const Item = (props: { item: Feed, currentFeedList: Array<Feed>, setCurrentFeedList: Function }) => {
+	const { state, actions } = useContext(StateContext)
+	
+	const editSchema = () => {
+		RootNavigation.navigate(NEW_FEED, { source: props.item.source })
+		actions.setScreens({ newSchema: true })
+	}
+	
 	const f = props.item
 	
 	return (
 		<View style={schemaStyle.itemContainer}>
 			<TouchableOpacity
-				onPress={() => console.log("schemas...")}
+				onPress={() => editSchema()}
 				style={schemaStyle.item}
 				activeOpacity={0.9}
 			>

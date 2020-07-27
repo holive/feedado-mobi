@@ -1,22 +1,24 @@
-import React, { useContext } from "react"
+import React, { useContext, useEffect } from "react"
 import { ScrollView, StyleSheet, Text, View } from "react-native"
 import { StateContext } from "../../context/Context"
 import { Feed, Section } from "../../feed/feed"
 import { Input } from "react-native-elements";
 import { AddSchemaSection, RemoveSchemaSection } from "../icons/IconsSchemaSection";
 
+export const emptySection = {
+	section_selector: '',
+	title_selector: '',
+	title_must_contain: '',
+	subtitle_selector: '',
+	subtitle_must_contain: '',
+	url_selector: '',
+}
+
 export const newSchemaScreenInitialState: Feed = {
 	source: '',
 	description: '',
 	category: '',
-	sections: new Map<number, Section>().set(0, {
-		section_selector: '',
-		title_selector: '',
-		title_must_contain: '',
-		subtitle_selector: '',
-		subtitle_must_contain: '',
-		url_selector: '',
-	})
+	sections: new Map<number, Section>().set(0, {...emptySection})
 }
 
 const newEmptySection: Section = {
@@ -132,6 +134,8 @@ const RenderSection = (index: number,
 		deleteSection(index)
 	}
 	
+	if (!section) return null
+	
 	return (
 		<View style={sectionsStyles.section} key={index}>
 			<RemoveSchemaSection callback={remove} />
@@ -145,8 +149,36 @@ const RenderSection = (index: number,
 	)
 }
 
-export default () => {
+export default (props: any) => {
 	const { state, actions } = useContext(StateContext)
+	
+	useEffect(() => {
+		if (props.route.params && props.route.params.source) {
+			console.debug('...editing schema')
+			state.feedService.findBySource(props.route.params.source)
+				.then(res => {
+					let newSection = {...emptySection}
+					
+					if (res.feed.sections) {
+						// @ts-ignore
+						const s: Section = res.feed.sections[0]
+						newSection.section_selector = s.section_selector
+						newSection.subtitle_must_contain = s.subtitle_must_contain
+						newSection.subtitle_selector = s.subtitle_selector
+						newSection.title_must_contain = s.title_must_contain
+						newSection.title_selector = s.title_selector
+						newSection.url_selector = s.url_selector
+					}
+					
+					res.feed.sections = new Map<number, Section>().set(0, newSection)
+					actions.setNewSchemaScreen(res.feed)
+				})
+				.catch(e => console.debug('state.feedService.findBySource', e.message))
+			
+			return
+		}
+		actions.cleanNewSchemaScreen()
+	}, [])
 	
 	const handleChanges = (label: string, value: string | Object) => {
 		actions.setNewSchemaScreen({...state.newSchemaScreen, [label.toLowerCase()]: value})

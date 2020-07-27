@@ -15,6 +15,7 @@ import RNPickerSelect from 'react-native-picker-select'
 import { StateContext } from "../../context/Context"
 import { Button } from "react-native-elements"
 import { Rss } from "../../rss/rss"
+import { Section } from "../../feed/feed";
 
 export const Dropdown = () => {
 	const { state, actions } = useContext(StateContext)
@@ -153,26 +154,25 @@ const RssComponent = () => {
 	}
 	
 	const teste = async () => {
-		//  await state.feedService.create({
-		// 	source: 'https://google.com.br',
-		// 	description: 'string',
-		// 	category: 'politica',
-		// 	sections: [
-		// 		{
-		// 			section_selector: 'string',
-		// 			title_selector: 'string',
-		// 			title_must_contain: 'string',
-		// 			subtitle_selector: 'string',
-		// 			subtitle_must_contain: 'string',
-		// 			url_selector: 'string'
-		// 		}
-		// 	]
-		// }).then((value) => {
-		// 	console.log('test: then: ', value)
-		//  }).catch((e) => console.log('teste: catch: ', e.message))
+		await state.feedService.create({
+			source: 'https://google.com.br',
+			description: 'string',
+			category: 'politica',
+			// @ts-ignore
+			sections: [{
+				section_selector: 'df',
+				title_selector: '234',
+				title_must_contain: '3re34r3',
+				subtitle_selector: '',
+				subtitle_must_contain: '',
+				url_selector: 'a',
+			}]
+		}).then((value) => {
+			console.log('test: then: ', value)
+		 }).catch((e) => console.log('teste: catch: ', e.message))
 		
 		// // test remove
-		// await state.feedService.delete('https://google.com')
+		// await state.feedService.delete('https://google.com.br')
 		// 	.then((res) => console.log('test delete: then: ', res))
 		// 	.catch((e) => console.log('test delete: catch: ', e.message))
 		
@@ -185,7 +185,7 @@ const RssComponent = () => {
 				})
 			})
 			.catch((e) => console.log('test findall: catch: ', e.message))
-		
+		//
 		// test update
 		// await state.feedService.update({
 		// 	source: 'https://google.com',

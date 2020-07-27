@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import State, { getInitialState } from "./state"
 import { Feed, Section } from "../feed/feed";
+import { emptySection, newSchemaScreenInitialState } from "../components/cards/NewFeedComponent";
 
 const initialState = getInitialState()
 
@@ -12,6 +13,7 @@ export const StateContext = React.createContext(
 			setCategories: (categories: Array<{ [key: string]: string }>) => {},
 			setCurrentCategory: (category: string) => {},
 			setNewSchemaScreen: (schema: Feed) => {},
+			cleanNewSchemaScreen: () => {},
 			handleNewScreenSectionFields: (index: number, fieldName: string, value: string) => {},
 		}
 	}
@@ -30,6 +32,7 @@ export const Context = (props: { children: React.ReactNode }) => {
 		setCategories: setCategories.bind(null, state, setState),
 		setCurrentCategory: setCurrentCategory.bind(null, state, setState),
 		setNewSchemaScreen: setNewSchemaScreen.bind(null, state, setState),
+		cleanNewSchemaScreen: cleanNewSchemaScreen.bind(null, state, setState),
 		handleNewScreenSectionFields: handleNewScreenSectionFields.bind(null, state, setState),
 	}
 	
@@ -52,6 +55,17 @@ const setNewSchemaScreen = (state: State, setState: Function, schema: Feed) => {
 	setState({ newSchemaScreen: schema })
 }
 
+const cleanNewSchemaScreen = (state: State, setState: Function) => {
+	const ss = { ...newSchemaScreenInitialState }
+	ss._id = ''
+	ss.category = ''
+	ss.description = ''
+	ss.source = ''
+	ss.sections = new Map<number, Section>().set(0, {...emptySection})
+	
+	setState({ newSchemaScreen: ss })
+}
+
 const handleNewScreenSectionFields = (state: State, setState: Function, index: number, fieldName: string, value: string) => {
 	const newState = { ...state }
 	const newSection = newState.newSchemaScreen.sections.get(index) as Section
@@ -59,7 +73,7 @@ const handleNewScreenSectionFields = (state: State, setState: Function, index: n
 	newSection[fieldName] = value
 	
 	newState.newSchemaScreen.sections.set(index, newSection)
-	setState(newState)
+	setState({ newSchemaScreen: newState.newSchemaScreen })
 }
 
 export default interface Screens {

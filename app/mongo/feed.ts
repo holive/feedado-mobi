@@ -64,7 +64,7 @@ class MongoFeedRepo implements Repository {
 			if (err?.message) console.warn(err)
 			
 			let result: Array<{ [key: string]: string }> = []
-			docs.forEach((v) => result.push({ label: v.category.toUpperCase(), value: v.category}))
+			docs.forEach((v) => result.push({ label: v.category, value: v.category}))
 			
 			setCategories(result)
 		})

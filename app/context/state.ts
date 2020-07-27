@@ -29,6 +29,6 @@ export const getInitialState = (): State => {
 		rssService: rssService,
 		categories: [],
 		currentCategory: '',
-		newSchemaScreen: newSchemaScreenInitialState,
+		newSchemaScreen: {...newSchemaScreenInitialState},
 	}
 }
