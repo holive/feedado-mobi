@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useState } from "react"
 import {
 	FlatList,
+	Modal,
 	SafeAreaView,
 	StyleSheet,
 	Text,
 	TouchableOpacity,
-	View,
-	Modal
+	View
 } from "react-native"
 import styles from '../../styles/theme.style'
 import { StateContext } from "../../context/Context"
@@ -27,10 +27,33 @@ const Item = (props: { item: Feed, currentFeedList: Array<Feed>, setCurrentFeedL
 	
 	return (
 		<View style={schemaStyle.itemContainer}>
+			<Modal
+				animationType="fade"
+				transparent={true}
+				visible={modalVisible}
+				onRequestClose={() => setModalVisible(!modalVisible)}
+			>
+				<View style={confirmationModalStyles.centeredView} onTouchEnd={() => setModalVisible(!modalVisible)}>
+					<View style={confirmationModalStyles.modalView}>
+						<View
+							style={confirmationModalStyles.openButton}
+						>
+							<Text
+								onPress={() =>  setModalVisible(!modalVisible)}
+								style={confirmationModalStyles.textStyle}
+							>
+								DELETE "{f.source}"
+							</Text>
+						</View>
+					</View>
+				</View>
+			</Modal>
+			
 			<TouchableOpacity
 				onPress={() => editSchema()}
+				onLongPress={() => setModalVisible(true)}
 				style={schemaStyle.item}
-				activeOpacity={0.9}
+				activeOpacity={0.85}
 			>
 				<Text numberOfLines={1} style={schemaStyle.sourceName}>{f.source}</Text>
 				<Text numberOfLines={1} style={schemaStyle.description}>{f.description}</Text>
@@ -110,5 +133,41 @@ const schemaStyle = StyleSheet.create({
 		textTransform: "uppercase",
 	}
 })
+
+const confirmationModalStyles = StyleSheet.create({
+	centeredView: {
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center",
+		marginTop: 103,
+		backgroundColor: 'rgba(0,0,0, 0.3)',
+	},
+	modalView: {
+		width: '80%',
+		backgroundColor: "white",
+		borderRadius: 3,
+		padding: 10,
+		alignItems: "center",
+		shadowColor: "#000",
+		shadowOffset: {
+			width: 0,
+			height: 2
+		},
+		shadowOpacity: 0.25,
+		shadowRadius: 3.84,
+		elevation: 5
+	},
+	openButton: {
+		padding: 10,
+	},
+	textStyle: {
+		color: "#46494c",
+		textAlign: "center"
+	},
+	modalText: {
+		marginBottom: 15,
+		textAlign: "center"
+	}
+});
 
 export default FeedsComponent
