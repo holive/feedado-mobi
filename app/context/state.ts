@@ -3,8 +3,32 @@ import FeedService from "../feed/service"
 import RssService from "../rss/service"
 import { newMongoFeedRepo } from "../mongo/feed";
 import { newMongoRssRepo } from "../mongo/rss";
-import { Feed } from "../feed/feed";
-import { newSchemaScreenInitialState } from "../components/cards/NewFeedComponent";
+import { Feed, Section } from "../feed/feed";
+
+export const emptySection = {
+	section_selector: '',
+	title_selector: '',
+	title_must_contain: '',
+	subtitle_selector: '',
+	subtitle_must_contain: '',
+	url_selector: '',
+}
+
+export const newSchemaScreenInitialState: Feed = {
+	source: '',
+	description: '',
+	category: '',
+	sections: new Map<number, Section>().set(0, {...emptySection})
+}
+
+export const newEmptySection: Section = {
+	section_selector: '',
+	title_selector: '',
+	title_must_contain: '',
+	subtitle_selector: '',
+	subtitle_must_contain: '',
+	url_selector: '',
+}
 
 export default interface State {
 	screens: Screens
@@ -13,6 +37,7 @@ export default interface State {
 	feedService: FeedService
 	rssService: RssService
 	newSchemaScreen: Feed
+	isEditingSchema: boolean
 }
 
 export const getInitialState = (): State => {
@@ -22,9 +47,10 @@ export const getInitialState = (): State => {
 	return {
 		screens: {
 			feeds: true,
-				schemas: false,
-				newSchema: false,
+			schemas: false,
+			newSchema: false,
 		},
+		isEditingSchema: false,
 		feedService: feedService,
 		rssService: rssService,
 		categories: [],

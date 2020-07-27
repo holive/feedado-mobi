@@ -1,7 +1,6 @@
 import React, { useState } from "react"
-import State, { getInitialState } from "./state"
+import State, { getInitialState, newSchemaScreenInitialState } from "./state"
 import { Feed, Section } from "../feed/feed";
-import { emptySection, newSchemaScreenInitialState } from "../components/cards/NewFeedComponent";
 
 const initialState = getInitialState()
 
@@ -15,6 +14,7 @@ export const StateContext = React.createContext(
 			setNewSchemaScreen: (schema: Feed) => {},
 			cleanNewSchemaScreen: () => {},
 			handleNewScreenSectionFields: (index: number, fieldName: string, value: string) => {},
+			setIsEditingSchema: (isEditing: boolean) => {},
 		}
 	}
 )
@@ -34,6 +34,7 @@ export const Context = (props: { children: React.ReactNode }) => {
 		setNewSchemaScreen: setNewSchemaScreen.bind(null, state, setState),
 		cleanNewSchemaScreen: cleanNewSchemaScreen.bind(null, state, setState),
 		handleNewScreenSectionFields: handleNewScreenSectionFields.bind(null, state, setState),
+		setIsEditingSchema: setIsEditingSchema.bind(null, state, setState)
 	}
 	
 	return (
@@ -67,6 +68,16 @@ const handleNewScreenSectionFields = (state: State, setState: Function, index: n
 	
 	newState.newSchemaScreen.sections.set(index, newSection)
 	setState({ newSchemaScreen: newState.newSchemaScreen })
+}
+
+const setIsEditingSchema = (state: State, setState: Function, isEditing: boolean) => {
+	const newScreenState: Screens = {
+		feeds: false,
+		schemas: false,
+		newSchema: true,
+	}
+	
+	setState({ isEditingSchema: isEditing, screens: newScreenState })
 }
 
 export default interface Screens {

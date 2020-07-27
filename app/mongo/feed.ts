@@ -19,7 +19,7 @@ class MongoFeedRepo implements Repository {
 	}
 	
 	public update = async (feed: Feed): Promise<NError> => {
-		const result = await this.feedCollection.updateAsync({ source: feed.source }, feed, {})
+		const result = await this.feedCollection.updateAsync({ _id: feed._id }, feed, {})
 		
 		if (result as unknown as number != 1) return new Error('could not update feed')
 		return null

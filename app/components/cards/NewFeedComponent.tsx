@@ -4,31 +4,8 @@ import { StateContext } from "../../context/Context"
 import { Feed, Section } from "../../feed/feed"
 import { Input } from "react-native-elements";
 import { AddSchemaSection, RemoveSchemaSection } from "../icons/IconsSchemaSection";
+import { emptySection, newEmptySection } from "../../context/state";
 
-export const emptySection = {
-	section_selector: '',
-	title_selector: '',
-	title_must_contain: '',
-	subtitle_selector: '',
-	subtitle_must_contain: '',
-	url_selector: '',
-}
-
-export const newSchemaScreenInitialState: Feed = {
-	source: '',
-	description: '',
-	category: '',
-	sections: new Map<number, Section>().set(0, {...emptySection})
-}
-
-const newEmptySection: Section = {
-	section_selector: '',
-	title_selector: '',
-	title_must_contain: '',
-	subtitle_selector: '',
-	subtitle_must_contain: '',
-	url_selector: '',
-}
 const newSchemaStyles = StyleSheet.create({
 	container: {
 		flexDirection: "column",
@@ -154,12 +131,13 @@ export default (props: any) => {
 	
 	useEffect(() => {
 		if (props.route.params && props.route.params.source) {
-			console.debug('...editing schema')
+			// console.debug('...editing schema', props.route.params.source)
 			state.feedService.findBySource(props.route.params.source)
 				.then(res => {
 					let newSection = {...emptySection}
 					
 					if (res.feed.sections) {
+						// console.debug('find by source', res.feed)
 						// @ts-ignore
 						const s: Section = res.feed.sections[0]
 						newSection.section_selector = s.section_selector
@@ -189,7 +167,6 @@ export default (props: any) => {
 		Array.from(state.newSchemaScreen.sections).map((v, i) => newSchema.set(v[0], v[1]))
 		
 		newSchema.set(position, section)
-		
 		handleChanges('sections', newSchema)
 	}
 	

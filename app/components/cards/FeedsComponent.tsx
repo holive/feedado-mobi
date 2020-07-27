@@ -1,26 +1,26 @@
 import React, { useContext, useEffect, useState } from "react"
 import {
 	FlatList,
-	Linking,
 	SafeAreaView,
 	StyleSheet,
 	Text,
 	TouchableOpacity,
-	View
+	View,
+	Modal
 } from "react-native"
 import styles from '../../styles/theme.style'
 import { StateContext } from "../../context/Context"
-import { Rss } from "../../rss/rss";
 import { Feed } from "../../feed/feed";
 import * as RootNavigation from "../../routes/RootNavigation";
 import { NEW_FEED } from "../../variables";
 
 const Item = (props: { item: Feed, currentFeedList: Array<Feed>, setCurrentFeedList: Function }) => {
 	const { state, actions } = useContext(StateContext)
+	const [modalVisible, setModalVisible] = useState(false)
 	
 	const editSchema = () => {
 		RootNavigation.navigate(NEW_FEED, { source: props.item.source })
-		actions.setScreens({ newSchema: true })
+		actions.setIsEditingSchema(true)
 	}
 	
 	const f = props.item
@@ -51,7 +51,7 @@ const FeedsComponent = () => {
 				const feeds = res.searchResult.feeds ? res.searchResult.feeds : []
 				setCurrentFeedList(feeds)
 			})
-	}, [])
+	}, [state.screens.schemas])
 	
 	const renderItem = (props: { item: Feed }) => {
 		return (

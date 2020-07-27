@@ -1,10 +1,11 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { ButtonGroup } from 'react-native-elements'
 import styles from '../../styles/theme.style'
 import { StateContext } from "../../context/Context"
 import { StyleSheet } from "react-native"
 import { RSS, FEEDS } from "../../variables"
 import * as RootNavigation from '../../routes/RootNavigation'
+import { act } from "react-test-renderer";
 
 const NewSchemaTab = (props: any) => {
 	return <ButtonGroup
@@ -19,15 +20,23 @@ const NewSchemaTab = (props: any) => {
 	/>
 }
 
-const HeaderTab = () => {
+const HeaderTab = (props: any) => {
 	const { state, actions } = useContext(StateContext)
 	const [selectedIndex, setSelectedIndex] = useState(0)
 	
-	if (state.screens.newSchema && state.newSchemaScreen.source) {
-		return <NewSchemaTab text={state.newSchemaScreen.source.replace('http://', '').replace('https://', '')}/>
-	} else if (state.screens.newSchema) {
-		return <NewSchemaTab text='NEW SCHEMA'/>
-	}
+	const newSchemaText = 'NEW SCHEMA'
+	const [tabText, settabText] = useState(newSchemaText)
+	
+	useEffect(() => {
+		if (state.isEditingSchema && state.newSchemaScreen.source) {
+			settabText(state.newSchemaScreen.source.replace('http://', '').replace('https://', ''))
+			actions.setIsEditingSchema(false)
+		} else if (!state.isEditingSchema && !state.newSchemaScreen.source) {
+			settabText(newSchemaText)
+		}
+	}, [state.newSchemaScreen.source])
+	
+	if (state.screens.newSchema) return <NewSchemaTab text={tabText}/>
 	
 	const updateIndex = (selectedIndex: any) => {
 		setSelectedIndex(selectedIndex)

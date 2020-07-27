@@ -3,12 +3,25 @@ import React, { useContext } from 'react'
 import Icon from "react-native-vector-icons/MaterialIcons"
 import { StateContext } from "../../context/Context"
 import * as RootNavigation from "../../routes/RootNavigation"
-import { RSS, NEW_FEED, FEEDS } from "../../variables"
+import { FEEDS, NEW_FEED } from "../../variables"
 
 Icon.loadFont()
 
 export const RightIconHeader = () => {
 	const { state, actions } = useContext(StateContext)
+	
+	const saveSchema = () => {
+		let save = state.feedService.create
+		if (state.newSchemaScreen._id) save = state.feedService.update
+		
+		save(state.newSchemaScreen)
+			.then(() => {
+				console.debug('...updating schema: ', state.newSchemaScreen)
+				RootNavigation.navigate(FEEDS, null)
+				actions.setScreens({ schemas: true })
+			})
+			.catch(e => console.warn(e.message))
+	}
 	
 	if (state.screens.newSchema) {
 		return (
@@ -16,10 +29,7 @@ export const RightIconHeader = () => {
 				name="save"
 				size={24}
 				color="#FFF"
-				onPress={() => {
-					RootNavigation.navigate(NEW_FEED, null)
-					actions.setScreens({ newSchema: true })
-				}}
+				onPress={() => saveSchema()}
 			/>
 		)
 	}

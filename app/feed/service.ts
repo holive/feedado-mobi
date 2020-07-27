@@ -20,7 +20,8 @@ class FeedService {
 		const found = await this.repo.findBySource(feed.source)
 		if (found.feed.source) return new Error('source already exists')
 		
-		return await this.repo.create(feed)
+		const newFeed: object = this.convertFeedSectionsMapToArray(feed)
+		return await this.repo.create(newFeed as Feed)
 	}
 	
 	public delete = async (source: string): Promise<NError> => {
@@ -32,7 +33,19 @@ class FeedService {
 	}
 	
 	public update = async (feed: Feed): Promise<NError> => {
-		return await this.repo.update(feed)
+		const newFeed: object = this.convertFeedSectionsMapToArray(feed)
+		return await this.repo.update(newFeed as Feed)
+	}
+	
+	private convertFeedSectionsMapToArray = (feed: Feed): object => {
+		const newFeed: object = {...feed}
+		const newSections: Array<object> = []
+		
+		Array.from(feed.sections).map((v, i) =>	newSections.push(v[1]))
+		
+		// @ts-ignore
+		newFeed.sections = newSections
+		return newFeed
 	}
 	
 	public findBySource = async (source: string): Promise<{ feed: Feed, error: NError }> => {
