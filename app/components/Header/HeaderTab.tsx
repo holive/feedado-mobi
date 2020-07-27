@@ -6,9 +6,9 @@ import { StyleSheet } from "react-native"
 import { RSS, FEEDS } from "../../variables"
 import * as RootNavigation from '../../routes/RootNavigation'
 
-const NewSchemaTab = () => {
+const NewSchemaTab = (props: any) => {
 	return <ButtonGroup
-		buttons={["NEW SCHEMA"]}
+		buttons={[props.text]}
 		onPress={() => {}}
 		innerBorderStyle={headerTabStyles.innerBorderStyle}
 		textStyle={headerTabStyles.textStyle}
@@ -23,8 +23,10 @@ const HeaderTab = () => {
 	const { state, actions } = useContext(StateContext)
 	const [selectedIndex, setSelectedIndex] = useState(0)
 	
-	if (state.screens.newSchema) {
-		return <NewSchemaTab/>
+	if (state.screens.newSchema && state.newSchemaScreen.source) {
+		return <NewSchemaTab text={state.newSchemaScreen.source.replace('http://', '').replace('https://', '')}/>
+	} else if (state.screens.newSchema) {
+		return <NewSchemaTab text='NEW SCHEMA'/>
 	}
 	
 	const updateIndex = (selectedIndex: any) => {
