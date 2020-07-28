@@ -24,8 +24,8 @@ class FeedService {
 		return await this.repo.create(newFeed as Feed)
 	}
 	
-	public delete = async (source: string): Promise<NError> => {
-		return await this.repo.delete(source)
+	public delete = async (id: string): Promise<NError> => {
+		return await this.repo.delete(id)
 	}
 	
 	public findAll = async (): Promise<{ searchResult: SearchResult }> => {

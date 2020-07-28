@@ -153,40 +153,7 @@ const RssComponent = () => {
 	}
 	
 	const teste = async () => {
-		// await state.feedService.create({
-		// 	source: 'https://google.com.br',
-		// 	description: 'string',
-		// 	category: 'politica',
-		// 	// @ts-ignore
-		// 	sections: [{
-		// 		section_selector: 'df',
-		// 		title_selector: '234',
-		// 		title_must_contain: '3re34r3',
-		// 		subtitle_selector: '',
-		// 		subtitle_must_contain: '',
-		// 		url_selector: 'a',
-		// 	}]
-		// }).then((value) => {
-		// 	console.log('test: then: ', value)
-		//  }).catch((e) => console.log('teste: catch: ', e.message))
-		
-		// // test remove
-		// await state.feedService.delete('https://google.com.br')
-		// 	.then((res) => console.log('test delete: then: ', res))
-		// 	.catch((e) => console.log('test delete: catch: ', e.message))
-		
-		// test find all feeds
-		await state.feedService.findAll()
-			.then((res) => {
-				console.log('test findall: then: ')
-				res.searchResult.feeds?.forEach((v) => {
-					console.log(v)
-				})
-			})
-			.catch((e) => console.log('test findall: catch: ', e.message))
-		//
-		// test update
-		await state.feedService.update({
+		await state.feedService.create({
 			source: 'https://google.com.br',
 			description: 'string',
 			category: 'politica',
@@ -199,8 +166,41 @@ const RssComponent = () => {
 				subtitle_must_contain: '',
 				url_selector: 'a',
 			}]
-		}).then((res) => console.log('test update: then: ', res))
-			.catch((e) => console.log('test update: catch: ', e.message))
+		}).then((value) => {
+			console.log('test: then: ', value)
+		 }).catch((e) => console.log('teste: catch: ', e.message))
+		
+		// // test remove
+		// await state.feedService.delete('kjh23g45jk2h34jkb2kj345b')
+		// 	.then((res) => console.log('test delete: then: ', res))
+		// 	.catch((e) => console.log('test delete: catch: ', e.message))
+		
+		// test find all feeds
+		// await state.feedService.findAll()
+		// 	.then((res) => {
+		// 		console.log('test findall: then: ')
+		// 		res.searchResult.feeds?.forEach((v) => {
+		// 			console.log(v)
+		// 		})
+		// 	})
+		// 	.catch((e) => console.log('test findall: catch: ', e.message))
+		//
+		// test update
+		// await state.feedService.update({
+		// 	source: 'https://google.com.br',
+		// 	description: 'string',
+		// 	category: 'politica',
+		// 	// @ts-ignore
+		// 	sections: [{
+		// 		section_selector: 'df',
+		// 		title_selector: '234',
+		// 		title_must_contain: '3re34r3',
+		// 		subtitle_selector: '',
+		// 		subtitle_must_contain: '',
+		// 		url_selector: 'a',
+		// 	}]
+		// }).then((res) => console.log('test update: then: ', res))
+		// 	.catch((e) => console.log('test update: catch: ', e.message))
 		
 		// teste create rss
 		// await state.rssService.create({

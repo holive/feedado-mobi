@@ -25,10 +25,10 @@ class MongoFeedRepo implements Repository {
 		return null
 	}
 	
-	public delete = async (source: string): Promise<NError> => {
-		const removed = await this.feedCollection.removeAsync({ source: source }, {})
+	public delete = async (id: string): Promise<NError> => {
+		const removed = await this.feedCollection.removeAsync({ _id: id }, {})
 		// erase all this.feedCollection.removeAsync({}, { multi: true })
-		
+
 		if (removed != 1) return new Error('could not remove feed')
 		return null
 	}

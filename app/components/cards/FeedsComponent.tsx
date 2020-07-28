@@ -14,13 +14,22 @@ import { Feed } from "../../feed/feed";
 import * as RootNavigation from "../../routes/RootNavigation";
 import { NEW_FEED } from "../../variables";
 
-const Item = (props: { item: Feed, currentFeedList: Array<Feed>, setCurrentFeedList: Function }) => {
+const Item = (props: { item: Feed, currentFeedList: Array<Feed>, setCurrentFeedList: Function, loadFeeds: Function }) => {
 	const { state, actions } = useContext(StateContext)
 	const [modalVisible, setModalVisible] = useState(false)
 	
 	const editSchema = () => {
 		RootNavigation.navigate(NEW_FEED, { source: props.item.source })
 		actions.setIsEditingSchema(true)
+	}
+	
+	const deleteSchema = (id: string) => {
+		state.feedService.delete(id)
+			.then(() => {
+				props.loadFeeds()
+				setModalVisible(!modalVisible)
+			})
+			.catch((e) => console.log(e.message))
 	}
 	
 	const f = props.item
@@ -39,7 +48,7 @@ const Item = (props: { item: Feed, currentFeedList: Array<Feed>, setCurrentFeedL
 							style={confirmationModalStyles.openButton}
 						>
 							<Text
-								onPress={() =>  setModalVisible(!modalVisible)}
+								onPress={() => deleteSchema(f._id || '')}
 								style={confirmationModalStyles.textStyle}
 							>
 								DELETE "{f.source}"
@@ -69,16 +78,21 @@ const FeedsComponent = () => {
 	const [currentFeedList, setCurrentFeedList] = useState(feedListInitialState)
 	
 	useEffect(() => {
+		loadFeeds()
+	}, [state.screens.schemas])
+	
+	const loadFeeds = () => {
 		state.feedService.findAll()
 			.then((res) => {
 				const feeds = res.searchResult.feeds ? res.searchResult.feeds : []
 				setCurrentFeedList(feeds)
 			})
-	}, [state.screens.schemas])
+	}
 	
 	const renderItem = (props: { item: Feed }) => {
 		return (
 			<Item
+				loadFeeds={loadFeeds}
 				item={props.item}
 				currentFeedList={currentFeedList}
 				setCurrentFeedList={setCurrentFeedList}
@@ -139,7 +153,7 @@ const confirmationModalStyles = StyleSheet.create({
 		flex: 1,
 		justifyContent: "center",
 		alignItems: "center",
-		marginTop: 103,
+		marginTop: 0,
 		backgroundColor: 'rgba(0,0,0, 0.3)',
 	},
 	modalView: {
