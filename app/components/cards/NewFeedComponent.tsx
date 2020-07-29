@@ -1,10 +1,11 @@
-import React, { useContext, useEffect } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import { ScrollView, StyleSheet, Text, View } from "react-native"
 import { StateContext } from "../../context/Context"
 import { Feed, Section } from "../../feed/feed"
 import { Input } from "react-native-elements";
 import { AddSchemaSection, RemoveSchemaSection } from "../icons/IconsSchemaSection";
 import { emptySection, newEmptySection } from "../../context/state";
+import styles from '../../styles/theme.style'
 
 const newSchemaStyles = StyleSheet.create({
 	container: {
@@ -56,6 +57,12 @@ const sectionsStyles = StyleSheet.create({
 })
 
 const NewSchemaInput = (props: any) => {
+	const [validValue, setValidValue] = useState(false)
+	
+	useEffect(() => { setValidValue(props.required && !props.value)	}, [props.value])
+	
+	const onChange = (value: string) => props.onChange(props.name, value)
+	
 	return (
 		<Input
 			value={props.value}
@@ -63,17 +70,14 @@ const NewSchemaInput = (props: any) => {
 			placeholder={props.placeholder}
 			labelStyle={newSchemaStyles.label}
 			inputStyle={newSchemaStyles.input}
-			inputContainerStyle={newSchemaStyles.inputContainer}
+			inputContainerStyle={{...newSchemaStyles.inputContainer, borderColor: (validValue ? styles.ORANGE : newSchemaStyles.inputContainer.borderColor)}}
 			containerStyle={newSchemaStyles.containerStyle}
-			onChangeText={(value) => props.onChange(props.name, value)}
+			onChangeText={(value) => onChange(value)}
 		/>
 	)
 }
 
-const Sections = (props: {
-	handleChanges: (index: number, section: Section) => void,
-	removeSection: (index: number) => void
-}) => {
+const Sections = (props: { handleChanges: (index: number, section: Section) => void, removeSection: (index: number) => void }) => {
 	const { state, actions } = useContext(StateContext)
 	const sectionsArray = Array.from(state.newSchemaScreen.sections)
 	
@@ -98,30 +102,22 @@ const Sections = (props: {
 	)
 }
 
-const RenderSection = (index: number,
-                       section: Section,
-                       handleChange: (index: number, fieldName: string, value: string) => void,
-                       deleteSection: (index: number) => void
-) => {
-	const onChange = (name: string, value: string) => {
-		handleChange(index, name, value)
-	}
+const RenderSection = (index: number, section: Section, handleChange: (index: number, fieldName: string, value: string) => void, deleteSection: (index: number) => void) => {
+	const onChange = (name: string, value: string) => handleChange(index, name, value)
 	
-	const remove = () => {
-		deleteSection(index)
-	}
+	const remove = () => deleteSection(index)
 	
 	if (!section) return null
 	
 	return (
 		<View style={sectionsStyles.section} key={index}>
 			<RemoveSchemaSection callback={remove} />
-			<NewSchemaInput onChange={onChange} name="section_selector" value={section.section_selector} label="Section selector" placeholder='.row.management section'/>
+			<NewSchemaInput required={true} onChange={onChange} name="section_selector" value={section.section_selector} label="Section selector" placeholder='.row.management section'/>
 			<NewSchemaInput onChange={onChange} name="title_selector" value={section.title_selector} label="Title selector" placeholder='.text-wrapper h3'/>
-			<NewSchemaInput onChange={onChange} name="title_must_contain" value={section.title_must_contain} label="Title must contain (optional)" placeholder='covid'/>
-			<NewSchemaInput onChange={onChange} name="subtitle_selector" value={section.subtitle_selector} label="Subtitle selector (optional)" placeholder='.text-wrapper p'/>
-			<NewSchemaInput onChange={onChange} name="subtitle_must_contain" value={section.subtitle_must_contain} label="Subtitle must contain (optional)" placeholder=''/>
-			<NewSchemaInput onChange={onChange} name="url_selector" value={section.url_selector} label="URL selector" placeholder='a'/>
+			<NewSchemaInput required={true} onChange={onChange} name="url_selector" value={section.url_selector} label="URL selector" placeholder='a'/>
+			<NewSchemaInput onChange={onChange} name="subtitle_selector" value={section.subtitle_selector} label="Subtitle selector" placeholder='.text-wrapper p'/>
+			<NewSchemaInput onChange={onChange} name="title_must_contain" value={section.title_must_contain} label="Title must contain" placeholder='covid'/>
+			<NewSchemaInput onChange={onChange} name="subtitle_must_contain" value={section.subtitle_must_contain} label="Subtitle must contain" placeholder=''/>
 		</View>
 	)
 }
@@ -159,10 +155,10 @@ export default (props: any) => {
 	}, [])
 	
 	const handleChanges = (label: string, value: string | Object) => {
-		actions.setNewSchemaScreen({...state.newSchemaScreen, [label.toLowerCase()]: value})
+		actions.setNewSchemaScreen({...state.newSchemaScreen, [label]: value})
 	}
 	
-	const handleSectionsChanges = (position: number, section: Section) => {
+	const handleSectionsInputChanges = (position: number, section: Section) => {
 		const newSchema = new Map<number, Section>()
 		Array.from(state.newSchemaScreen.sections).map((v, i) => newSchema.set(v[0], v[1]))
 		
@@ -186,6 +182,7 @@ export default (props: any) => {
 	return (
 		<ScrollView style={newSchemaStyles.container}>
 			<NewSchemaInput
+				required={true}
 				name="source"
 				label="Source"
 				placeholder='https://www.nytimes.com/'
@@ -198,6 +195,7 @@ export default (props: any) => {
 				onChange={handleChanges}
 				value={state.newSchemaScreen.description}/>
 			<NewSchemaInput
+				required={true}
 				name="category"
 				label="Category"
 				placeholder='economy'
@@ -206,7 +204,7 @@ export default (props: any) => {
 			
 			<Text style={newSchemaStyles.sectionsTitle}>Sections</Text>
 			
-			<Sections handleChanges={handleSectionsChanges} removeSection={removeSection}/>
+			<Sections handleChanges={handleSectionsInputChanges} removeSection={removeSection}/>
 		</ScrollView>
 	)
 }
