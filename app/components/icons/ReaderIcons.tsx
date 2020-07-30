@@ -4,15 +4,43 @@ import Icon from "react-native-vector-icons/MaterialIcons"
 import { StateContext } from "../../context/Context"
 import * as RootNavigation from "../../routes/RootNavigation"
 import { FEEDS, NEW_FEED } from "../../variables"
+import { Alert } from "react-native";
+import { Feed, Section } from "../../feed/feed";
 
 Icon.loadFont()
 
 export const RightIconHeader = () => {
 	const { state, actions } = useContext(StateContext)
 	
+	const schemaIsValid = (schema: {source: string, category: string, sections: Array<Section>}): boolean => {
+		let isValid = true
+		
+		if (!schema.source || !schema.category) isValid = false
+
+		schema.sections.forEach((v, i) => {
+			if (!v.section_selector || !v.url_selector) isValid = false
+		})
+		
+		return isValid
+	}
+	
 	const saveSchema = () => {
 		let save = state.feedService.create
 		if (state.newSchemaScreen._id) save = state.feedService.update
+		
+		// @ts-ignore
+		if (!schemaIsValid(state.newSchemaScreen)) {
+			Alert.alert(
+				'Unable to Save',
+				'missing required field(s)',
+				[
+					{ text: 'OK' }
+				],
+				{ cancelable: true }
+			)
+			
+			return
+		}
 		
 		save(state.newSchemaScreen)
 			.then(() => {

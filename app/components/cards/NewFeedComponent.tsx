@@ -4,7 +4,7 @@ import { StateContext } from "../../context/Context"
 import { Feed, Section } from "../../feed/feed"
 import { Input } from "react-native-elements";
 import { AddSchemaSection, RemoveSchemaSection } from "../icons/IconsSchemaSection";
-import { emptySection, newEmptySection } from "../../context/state";
+import { newEmptySection } from "../../context/state";
 import styles from '../../styles/theme.style'
 
 const newSchemaStyles = StyleSheet.create({
@@ -82,7 +82,7 @@ const Sections = (props: { handleChanges: (index: number, section: Section) => v
 	const sectionsArray = Array.from(state.newSchemaScreen.sections)
 	
 	const addEmptySection = () => {
-		props.handleChanges(sectionsArray.length, newEmptySection)
+		props.handleChanges(sectionsArray.length, {...newEmptySection})
 	}
 	
 	const handleSectionChange = (index: number, fieldName: string, value: string) => {
@@ -130,7 +130,7 @@ export default (props: any) => {
 			// console.debug('...editing schema', props.route.params.source)
 			state.feedService.findBySource(props.route.params.source)
 				.then(res => {
-					let newSection = {...emptySection}
+					let newSection = {...newEmptySection}
 					
 					if (res.feed.sections) {
 						// console.debug('find by source', res.feed)

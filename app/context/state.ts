@@ -5,7 +5,7 @@ import { newMongoFeedRepo } from "../mongo/feed";
 import { newMongoRssRepo } from "../mongo/rss";
 import { Feed, Section } from "../feed/feed";
 
-export const emptySection = {
+export const newEmptySection: Section = {
 	section_selector: '',
 	title_selector: '',
 	title_must_contain: '',
@@ -18,16 +18,7 @@ export const newSchemaScreenInitialState: Feed = {
 	source: '',
 	description: '',
 	category: '',
-	sections: new Map<number, Section>().set(0, {...emptySection})
-}
-
-export const newEmptySection: Section = {
-	section_selector: '',
-	title_selector: '',
-	title_must_contain: '',
-	subtitle_selector: '',
-	subtitle_must_contain: '',
-	url_selector: '',
+	sections: new Map<number, Section>().set(0, {...newEmptySection})
 }
 
 export default interface State {
