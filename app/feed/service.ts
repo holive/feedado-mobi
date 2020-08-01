@@ -20,7 +20,9 @@ class FeedService {
 		const found = await this.repo.findBySource(feed.source)
 		if (found.feed.source) return new Error('source already exists')
 		
+		feed.category = feed.category.toLowerCase()
 		const newFeed: object = this.convertFeedSectionsMapToArray(feed)
+		
 		return await this.repo.create(newFeed as Feed)
 	}
 	
@@ -37,17 +39,6 @@ class FeedService {
 		return await this.repo.update(newFeed as Feed)
 	}
 	
-	private convertFeedSectionsMapToArray = (feed: Feed): object => {
-		const newFeed: object = {...feed}
-		const newSections: Array<object> = []
-		
-		Array.from(feed.sections).map((v, i) =>	newSections.push(v[1]))
-		
-		// @ts-ignore
-		newFeed.sections = newSections
-		return newFeed
-	}
-	
 	public findBySource = async (source: string): Promise<{ feed: Feed, error: NError }> => {
 		return this.repo.findBySource(source)
 	}
@@ -56,6 +47,10 @@ class FeedService {
 		this.repo.findAllCategories(setCategories)
 	}
 	
+	public findAllByCategory = async (category: string): Promise<{ searchResult: SearchResult }> => {
+		return this.repo.findAllByCategory(category)
+	}
+
 	private validateURL = (source: string): boolean => {
 		let url
 		try {
@@ -65,6 +60,17 @@ class FeedService {
 		}
 		
 		return url.protocol === "http:" || url.protocol === "https:"
+	}
+	
+	private convertFeedSectionsMapToArray = (feed: Feed): object => {
+		const newFeed: object = {...feed}
+		const newSections: Array<object> = []
+		
+		Array.from(feed.sections).map((v, i) =>	newSections.push(v[1]))
+		
+		// @ts-ignore
+		newFeed.sections = newSections
+		return newFeed
 	}
 }
 

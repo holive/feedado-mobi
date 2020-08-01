@@ -16,6 +16,8 @@ import { StateContext } from "../../context/Context"
 import { Button } from "react-native-elements"
 import { Rss } from "../../rss/rss"
 
+const cheerio = require('react-native-cheerio')
+
 export const Dropdown = () => {
 	const { state, actions } = useContext(StateContext)
 	const [selectedCategory, setCategory] = useState('')
@@ -38,7 +40,7 @@ export const Dropdown = () => {
 	return (
 		<RNPickerSelect
 			onValueChange={(category) => setCurrentCategory(category)}
-			 // @ts-ignore
+			// @ts-ignore
 			items={state.categories}
 			value={selectedCategory}
 			style={{
@@ -59,7 +61,7 @@ export const Dropdown = () => {
 					right: 25,
 				},
 			}}
-			Icon={() => <Icon name="keyboard-arrow-down" style={feedStyle.icon} /> }
+			Icon={() => <Icon name="keyboard-arrow-down" style={feedStyle.icon}/>}
 			useNativeAndroidPickerStyle={false}
 		/>
 	)
@@ -67,7 +69,7 @@ export const Dropdown = () => {
 
 const animationDuration = 500
 
-const AnimatableFade = ({isVisible, children}: { isVisible: boolean, children: React.ReactNode }) => {
+const AnimatableFade = ({ isVisible, children }: { isVisible: boolean, children: React.ReactNode }) => {
 	if (isVisible) return <View>{children}</View>
 	
 	return (
@@ -75,7 +77,7 @@ const AnimatableFade = ({isVisible, children}: { isVisible: boolean, children: R
 			duration={animationDuration}
 			animation='fadeOutRightBig'
 			style={[
-				{opacity: isVisible ? 1.0 : 0.0},
+				{ opacity: isVisible ? 1.0 : 0.0 },
 			]}
 			useNativeDriver={true}
 		>
@@ -113,17 +115,17 @@ const Item = (props: { item: Rss, currentRssList: Array<Rss>, setCurrentRssList:
 					
 					<Text style={feedStyle.title}>{rss.title}</Text>
 					{subtitle}
-					<Text numberOfLines={1} style={feedStyle.sourceName}>{rss.source}</Text>
+					<Text numberOfLines={1} style={feedStyle.sourceName}>{rss.url}</Text>
 				
 				</TouchableOpacity>
 				
 				
-					<Icon
-						name="remove-circle"
-						style={feedStyle.icon}
-						onPress={() => removeRss(rss._id || '')}
-					/>
-				
+				<Icon
+					name="remove-circle"
+					style={feedStyle.icon}
+					onPress={() => removeRss(rss._id || '')}
+				/>
+			
 			</View>
 		</AnimatableFade>
 	)
@@ -146,29 +148,29 @@ const RssComponent = () => {
 		return (
 			<Item
 				item={props.item}
-			    currentRssList={currentRssList}
-			    setCurrentRssList={setCurrentRssList}
+				currentRssList={currentRssList}
+				setCurrentRssList={setCurrentRssList}
 			/>
 		)
 	}
 	
 	const teste = async () => {
-		await state.feedService.create({
-			source: 'https://google.com.br',
-			description: 'string',
-			category: 'politica',
-			// @ts-ignore
-			sections: [{
-				section_selector: 'df',
-				title_selector: '234',
-				title_must_contain: '3re34r3',
-				subtitle_selector: '',
-				subtitle_must_contain: '',
-				url_selector: 'a',
-			}]
-		}).then((value) => {
-			console.log('test: then: ', value)
-		 }).catch((e) => console.log('teste: catch: ', e.message))
+		// await state.feedService.create({
+		// 	source: 'https://google.com.br',
+		// 	description: 'string',
+		// 	category: 'economia',
+		// 	// @ts-ignore
+		// 	sections: [{
+		// 		section_selector: 'df',
+		// 		title_selector: '234',
+		// 		title_must_contain: '3re34r3',
+		// 		subtitle_selector: '',
+		// 		subtitle_must_contain: '',
+		// 		url_selector: 'a',
+		// 	}]
+		// }).then((value) => {
+		// 	console.log('test: then: ', value)
+		//  }).catch((e) => console.log('teste: catch: ', e.message))
 		
 		// // test remove
 		// await state.feedService.delete('kjh23g45jk2h34jkb2kj345b')
@@ -204,7 +206,6 @@ const RssComponent = () => {
 		
 		// teste create rss
 		// await state.rssService.create({
-		// 		source: 'https://google.com',
 		// 		title: 'Notícia de economia',
 		// 		subtitle: 'Teste de subtítulo com mais de uma linha para testar o layout da lista de rss do app de feed personalizado',
 		// 		url: 'https://google.com/a',
@@ -221,6 +222,56 @@ const RssComponent = () => {
 		
 		// teste find all categories
 		// await state.feedService.findAllCategories(actions.setCategories)
+		
+		// teste find all sources by category
+		state.feedService.findAllByCategory('economia')
+			.then(async (res) => {
+				const Rsss: { [key: string]: Rss } = {}
+				const feeds = res.searchResult.feeds || []
+				
+				for (const [i, feed] of feeds.entries()) {
+					for (const [j, section] of feed.sections.entries()) {
+						await fetch(feed.source)
+							.then((resp) => resp.text())
+							.then((res) => {
+								const copySection = { ...section } // got null if not copy
+								const $ = cheerio.load(res)
+								const section_selector = $(copySection.section_selector)
+								
+								for (let l = 0; l < section_selector.length; l++) {
+									const title = $(section.title_selector, section_selector[l]).text()
+									const subtitle = $(section.subtitle_selector, section_selector[l]).text()
+									const a = $(section.url_selector, section_selector[l]).attr('href')
+									
+									// validate
+									if (!a || !title) continue
+									if (section.title_must_contain
+										&& !title.toLowerCase().includes(section.title_must_contain.toLowerCase())) continue
+									if (section.subtitle_must_contain
+										&& !subtitle.toLowerCase().includes(section.subtitle_must_contain.toLowerCase())) continue
+									
+									Rsss[a] = {
+										url: a,
+										category: feed.category,
+										title: title,
+										subtitle: subtitle,
+										timestamp: Date.now(),
+									}
+								}
+							})
+						
+					}
+				}
+				
+				// console.log('Rsss: ', Rsss)
+				for (const [i, rss] of Object.keys(Rsss).entries()) {
+					await state.rssService.create(Rsss[rss])
+						.catch((e) => console.warn('could not create rss: ', e.message))
+						.then(() => console.debug('rss created: ', rss))
+				}
+			})
+		
+		
 	}
 	
 	return (

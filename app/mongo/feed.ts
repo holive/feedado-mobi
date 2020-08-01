@@ -59,15 +59,28 @@ class MongoFeedRepo implements Repository {
 		}
 	}
 	
-	public findAllCategories = (setCategories: (categories: Array<{ [key: string]: string }>) => void) => {
+	public findAllCategories = (callback: (categories: Array<{ [key: string]: string }>) => void) => {
 		this.feedCollection.find({}, { _id: 0, category: 1 }, (err, docs) => {
 			if (err?.message) console.warn(err)
 			
-			let result: Array<{ [key: string]: string }> = []
-			docs.forEach((v) => result.push({ label: v.category, value: v.category}))
+			const deduplicated: {[key: string]: {}} = {}
+			docs.forEach((v) => deduplicated[v.category] = {label: v.category, value: v.category})
 			
-			setCategories(result)
+			let result: Array<{ [key: string]: string }> = []
+			Object.keys(deduplicated).forEach((v) => result.push(deduplicated[v]))
+			
+			callback(result)
 		})
+	}
+	
+	public findAllByCategory = async (category: string): Promise<{ searchResult: SearchResult }> => {
+		const result = await this.feedCollection.findAsync({category: category})
+		
+		return {
+			searchResult: {
+				feeds: result as Array<Feed>,
+			}
+		}
 	}
 }
 

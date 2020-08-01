@@ -154,12 +154,12 @@ const confirmationModalStyles = StyleSheet.create({
 		justifyContent: "center",
 		alignItems: "center",
 		marginTop: 0,
-		backgroundColor: 'rgba(0,0,0, 0.3)',
+		backgroundColor: 'rgba(0,0,0, 0.5)',
 	},
 	modalView: {
 		width: '80%',
 		backgroundColor: "white",
-		borderRadius: 3,
+		borderRadius: 1,
 		padding: 10,
 		alignItems: "center",
 		shadowColor: "#000",
@@ -167,9 +167,9 @@ const confirmationModalStyles = StyleSheet.create({
 			width: 0,
 			height: 2
 		},
-		shadowOpacity: 0.25,
-		shadowRadius: 3.84,
-		elevation: 5
+		shadowOpacity: 0.15,
+		shadowRadius: 5,
+		elevation: 25
 	},
 	openButton: {
 		padding: 10,

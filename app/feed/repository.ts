@@ -8,4 +8,5 @@ export interface Repository {
 	findBySource: (source: string) => Promise<{ feed: Feed, error: NError }>
 	findAll: () => Promise<{ searchResult: SearchResult }>
 	findAllCategories: (setCategories: (categories: Array<{ [key: string]: string }>) => void) => void
+	findAllByCategory: (category: string) => Promise<{ searchResult: SearchResult }>
 }

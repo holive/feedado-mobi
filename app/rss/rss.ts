@@ -1,6 +1,5 @@
 export interface Rss {
 	_id?: string
-	source: string
 	title: string
 	subtitle?: string
 	url: string
