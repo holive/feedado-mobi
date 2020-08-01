@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react"
 import { ScrollView, StyleSheet, Text, View } from "react-native"
 import { StateContext } from "../../context/Context"
-import { Feed, Section } from "../../feed/feed"
+import { Section } from "../../feed/feed"
 import { Input } from "react-native-elements";
 import { AddSchemaSection, RemoveSchemaSection } from "../icons/IconsSchemaSection";
 import { newEmptySection } from "../../context/state";
@@ -130,22 +130,23 @@ export default (props: any) => {
 			// console.debug('...editing schema', props.route.params.source)
 			state.feedService.findBySource(props.route.params.source)
 				.then(res => {
-					let newSection = {...newEmptySection}
+					let newFeed = {...res.feed}
+					newFeed.sections = new Map<number, Section>()
 					
-					if (res.feed.sections) {
-						// console.debug('find by source', res.feed)
-						// @ts-ignore
-						const s: Section = res.feed.sections[0]
-						newSection.section_selector = s.section_selector
-						newSection.subtitle_must_contain = s.subtitle_must_contain
-						newSection.subtitle_selector = s.subtitle_selector
-						newSection.title_must_contain = s.title_must_contain
-						newSection.title_selector = s.title_selector
-						newSection.url_selector = s.url_selector
-					}
-					
-					res.feed.sections = new Map<number, Section>().set(0, newSection)
-					actions.setNewSchemaScreen(res.feed)
+					res.feed.sections.forEach((v, i) => {
+						const sec: Section = {
+							section_selector: v.section_selector || '',
+							subtitle_must_contain: v.subtitle_must_contain || '',
+							subtitle_selector: v.subtitle_selector || '',
+							title_must_contain: v.title_must_contain || '',
+							title_selector: v.title_selector || '',
+							url_selector: v.url_selector || '',
+						}
+						
+						newFeed.sections.set(i, sec)
+					})
+
+					actions.setNewSchemaScreen(newFeed)
 				})
 				.catch(e => console.debug('state.feedService.findBySource', e.message))
 			
