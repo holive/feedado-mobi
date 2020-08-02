@@ -28,7 +28,7 @@ export const Dropdown = () => {
 	const fetchCategoriesAndUpdateDropdown = () => {
 		state.feedService.findAllCategories((cats: Array<{ [key: string]: string }>) => {
 			actions.setCategories(cats)
-			if (cats[0]) setCategory(cats[0].value)
+			if (cats[0]) setCategory(state.currentCategory || cats[0].value)
 		})
 	}
 	
@@ -52,7 +52,7 @@ export const Dropdown = () => {
 					paddingHorizontal: 14,
 					paddingVertical: 5,
 					marginTop: 20,
-					marginBottom: 10,
+					marginBottom: 20,
 					marginLeft: 16,
 					marginRight: 16,
 					borderRadius: 3,
@@ -302,12 +302,12 @@ const feedStyle = StyleSheet.create({
 	item: {
 		padding: 15,
 		paddingVertical: 12,
-		marginVertical: 8,
+		marginVertical: 0,
 		marginHorizontal: 16,
 		backgroundColor: '#fff',
 		borderRadius: 3,
 		width: "80%",
-		marginBottom: 8,
+		marginBottom: 16,
 		
 		elevation: 0.5,
 	},
