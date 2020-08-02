@@ -7,7 +7,7 @@ import { AddSchemaSection, RemoveSchemaSection } from "../icons/IconsSchemaSecti
 import { newEmptySection } from "../../context/state";
 import styles from '../../styles/theme.style'
 
-const newSchemaStyles = StyleSheet.create({
+export const newSchemaStyles = StyleSheet.create({
 	container: {
 		flexDirection: "column",
 		flex: 1,
@@ -56,7 +56,7 @@ const sectionsStyles = StyleSheet.create({
 	},
 })
 
-const NewSchemaInput = (props: any) => {
+export const NewSchemaInput = (props: any) => {
 	const [validValue, setValidValue] = useState(false)
 	
 	useEffect(() => { setValidValue(props.required && !props.value)	}, [props.value])
@@ -65,6 +65,7 @@ const NewSchemaInput = (props: any) => {
 	
 	return (
 		<Input
+			keyboardType={props.keyboardType}
 			value={props.value}
 			label={props.label}
 			placeholder={props.placeholder}

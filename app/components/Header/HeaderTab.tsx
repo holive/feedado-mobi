@@ -36,8 +36,6 @@ const HeaderTab = (props: any) => {
 		}
 	}, [state.newSchemaScreen.source])
 	
-	if (state.screens.newSchema) return <NewSchemaTab text={tabText}/>
-	
 	const updateIndex = (selectedIndex: any) => {
 		setSelectedIndex(selectedIndex)
 		if (selectedIndex == 0) {
@@ -48,6 +46,10 @@ const HeaderTab = (props: any) => {
 		RootNavigation.navigate(FEEDS, null)
 		actions.setScreens({ schemas: true })
 	}
+	
+	if (state.screens.newSchema) return <NewSchemaTab text={tabText}/>
+	
+	if (state.screens.config) return null
 	
 	return <ButtonGroup
 		onPress={updateIndex}

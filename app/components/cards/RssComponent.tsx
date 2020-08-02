@@ -15,7 +15,7 @@ import RNPickerSelect from 'react-native-picker-select'
 import { StateContext } from "../../context/Context"
 import { Button } from "react-native-elements"
 import { Rss } from "../../rss/rss"
-import Loading from "./Loading";
+import Loading from "../Loading";
 
 // const cheerio = require('react-native-cheerio')
 
@@ -271,6 +271,15 @@ const RssComponent = () => {
 		// 				.catch((e) => console.warn('could not create rss: ', e.message))
 		// 				.then(() => console.debug('rss created: ', rss))
 		// 		}
+		// 	})
+		
+		// teste config
+		// await state.configService.update({max_feeds_by_category: '10'})
+		// 	.then(() => {
+		// 		state.configService.get()
+		// 			.then((res) => {
+		// 				console.debug('test config get: ', res)
+		// 			})
 		// 	})
 	}
 	

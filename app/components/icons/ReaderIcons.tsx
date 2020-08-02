@@ -3,8 +3,8 @@ import React, { useContext } from 'react'
 import Icon from "react-native-vector-icons/MaterialIcons"
 import { StateContext } from "../../context/Context"
 import * as RootNavigation from "../../routes/RootNavigation"
-import { FEEDS, NEW_FEED } from "../../variables"
-import { Alert } from "react-native"
+import { FEEDS, RSS, NEW_FEED, CONFIG } from "../../variables"
+import { Alert, StyleSheet } from "react-native"
 import { Section } from "../../feed/feed"
 import { Rss } from "../../rss/rss";
 
@@ -28,6 +28,19 @@ export const RightIconHeader = () => {
 	}
 	
 	const saveSchema = () => {
+		if (!state.feedService.validateURL(state.newSchemaScreen.source)) {
+			Alert.alert(
+				'...oops',
+				'Invalid source URL!',
+				[
+					{ text: 'OK' }
+				],
+				{ cancelable: true }
+			)
+			
+			return
+		}
+		
 		let save = state.feedService.create
 		if (state.newSchemaScreen._id) save = state.feedService.update
 		
@@ -46,8 +59,10 @@ export const RightIconHeader = () => {
 		}
 		
 		save(state.newSchemaScreen)
-			.then(() => {
+			.then((res) => {
+				if (res) console.warn(res.message)
 				console.debug('...updating schema: ', state.newSchemaScreen)
+				
 				RootNavigation.navigate(FEEDS, null)
 				actions.setScreens({ schemas: true })
 			})
@@ -107,6 +122,27 @@ export const RightIconHeader = () => {
 			.then(() => actions.setIsLoading(false))
 	}
 	
+	const saveConfig = () => {
+		state.configService.update(state.config)
+			.then(() => {
+				RootNavigation.navigate(RSS, null)
+				actions.setScreens({ feeds: true })
+			})
+	}
+	
+	if (state.isLoading) return null
+	
+	if (state.screens.config) {
+		return (
+			<Icon
+				name="save"
+				size={24}
+				style={iconsStyle.icon}
+				onPress={() => saveConfig()}
+			/>
+		)
+	}
+	
 	if (state.screens.newSchema) {
 		return (
 			<Icon
@@ -132,13 +168,11 @@ export const RightIconHeader = () => {
 		)
 	}
 	
-	if (state.isLoading) return null
-	
 	return (
 		<Icon
 			name="refresh"
 			size={24}
-			color="#FFF"
+			style={iconsStyle.icon}
 			onPress={() => generateRsssByCategory(state.currentCategory)}
 		/>
 	)
@@ -147,12 +181,26 @@ export const RightIconHeader = () => {
 export const LeftIconsdHeader = () => {
 	const { state, actions } = useContext(StateContext)
 	
+	if (state.screens.config) {
+		return (
+			<Icon
+				name="arrow-back"
+				size={24}
+				style={iconsStyle.icon}
+				onPress={() => {
+					RootNavigation.navigate(RSS, null)
+					actions.setScreens({ feeds: true })
+				}}
+			/>
+		)
+	}
+	
 	if (state.screens.newSchema) {
 		return (
 			<Icon
 				name="arrow-back"
 				size={24}
-				color="#FFF"
+				style={iconsStyle.icon}
 				onPress={() => {
 					RootNavigation.navigate(FEEDS, null)
 					actions.setScreens({ schemas: true })
@@ -161,12 +209,23 @@ export const LeftIconsdHeader = () => {
 		)
 	}
 	
-	return (
-		<Icon
-			name="menu"
-			size={24}
-			color="#FFF"
-			onPress={() => console.log('refresh')}
-		/>
-	)
+	return null
+	// return (
+	// 	<Icon
+	// 		name="settings"
+	// 		size={24}
+	// 		style={iconsStyle.icon}
+	// 		onPress={() => {
+	// 			RootNavigation.navigate(CONFIG, null)
+	// 			actions.setScreens({ config: true })
+	// 		}}
+	// 	/>
+	// )
 }
+
+const iconsStyle = StyleSheet.create({
+	icon: {
+		color: '#FFF',
+		marginHorizontal: 6,
+	}
+})

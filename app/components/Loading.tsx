@@ -1,9 +1,9 @@
 // @ts-ignore
 import { EatBeanLoader, TextLoader } from "react-native-indicator"
-import { StyleSheet, View } from "react-native";
-import React, { useContext } from "react";
-import { StateContext } from "../../context/Context";
-import styles from '../../styles/theme.style'
+import { StyleSheet, View } from "react-native"
+import React, { useContext } from "react"
+import { StateContext } from "../context/Context"
+import styles from '../styles/theme.style'
 
 export default () => {
 	const { state, actions } = useContext(StateContext)

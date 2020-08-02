@@ -13,8 +13,6 @@ class FeedService {
 	}
 	
 	public create = async (feed: Feed): Promise<NError> => {
-		if (!this.validateURL(feed.source)) return new Error('invalid url')
-
 		if (feed.source[feed.source.length - 1] == '/') feed.source = feed.source.slice(0, -1)
 		
 		const found = await this.repo.findBySource(feed.source)
@@ -51,7 +49,7 @@ class FeedService {
 		return this.repo.findAllByCategory(category)
 	}
 
-	private validateURL = (source: string): boolean => {
+	public validateURL = (source: string): boolean => {
 		let url
 		try {
 			url = new URL(source)

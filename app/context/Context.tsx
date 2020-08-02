@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import State, { getInitialState, newSchemaScreenInitialState } from "./state"
 import { Feed, Section } from "../feed/feed";
+import { Config } from "../config/config";
 
 const initialState = getInitialState()
 
@@ -16,6 +17,7 @@ export const StateContext = React.createContext(
 			handleNewScreenSectionFields: (index: number, fieldName: string, value: string) => {},
 			setIsEditingSchema: (isEditing: boolean) => {},
 			setIsLoading: (isEditing: boolean) => {},
+			setConfig: (config: Config) => {},
 		}
 	}
 )
@@ -37,6 +39,7 @@ export const Context = (props: { children: React.ReactNode }) => {
 		handleNewScreenSectionFields: handleNewScreenSectionFields.bind(null, state, setState),
 		setIsEditingSchema: setIsEditingSchema.bind(null, state, setState),
 		setIsLoading: setIsLoading.bind(null, state, setState),
+		setConfig: setConfig.bind(null, state, setState),
 	}
 	
 	return (
@@ -44,6 +47,10 @@ export const Context = (props: { children: React.ReactNode }) => {
 			{props.children}
 		</StateContext.Provider>
 	)
+}
+
+const setConfig = (state: State, setState: Function, config: Config) => {
+	setState({ config: config })
 }
 
 const setIsLoading = (state: State, setState: Function, loading: boolean) => {
@@ -81,6 +88,7 @@ const setIsEditingSchema = (state: State, setState: Function, isEditing: boolean
 		feeds: false,
 		schemas: false,
 		newSchema: true,
+		config: false,
 	}
 	
 	setState({ isEditingSchema: isEditing, screens: newScreenState })
@@ -90,6 +98,7 @@ export default interface Screens {
 	feeds: boolean
 	schemas: boolean
 	newSchema: boolean
+	config: boolean
 }
 
 const setScreens = (state: State, setState: Function, screen: { [key: string]: boolean }) => {
@@ -97,6 +106,7 @@ const setScreens = (state: State, setState: Function, screen: { [key: string]: b
 		feeds: false,
 		schemas: false,
 		newSchema: false,
+		config: false,
 	}
 	
 	setState({ screens: { ...newScreenState, ...screen } })
