@@ -23,7 +23,11 @@ class RssService {
 	}
 	
 	public findAllByCategory = async (category: string): Promise<{ searchResult: SearchResult }> => {
-		return await this.repo.findAllByCategory(category)
+		const result = await this.repo.findAllByCategory(category)
+		
+		result.searchResult.rsss?.sort((a, b) => b['timestamp']-a['timestamp'])
+		
+		return result
 	}
 }
 
