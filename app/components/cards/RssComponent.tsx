@@ -15,8 +15,9 @@ import RNPickerSelect from 'react-native-picker-select'
 import { StateContext } from "../../context/Context"
 import { Button } from "react-native-elements"
 import { Rss } from "../../rss/rss"
+import Loading from "./Loading";
 
-const cheerio = require('react-native-cheerio')
+// const cheerio = require('react-native-cheerio')
 
 export const Dropdown = () => {
 	const { state, actions } = useContext(StateContext)
@@ -36,6 +37,8 @@ export const Dropdown = () => {
 		setCategory(category)
 		actions.setCurrentCategory(category)
 	}
+	
+	if (state.isLoading) return null
 	
 	return (
 		<RNPickerSelect
@@ -224,55 +227,54 @@ const RssComponent = () => {
 		// await state.feedService.findAllCategories(actions.setCategories)
 		
 		// teste find all sources by category
-		state.feedService.findAllByCategory('economia')
-			.then(async (res) => {
-				const Rsss: { [key: string]: Rss } = {}
-				const feeds = res.searchResult.feeds || []
-				
-				for (const [i, feed] of feeds.entries()) {
-					for (const [j, section] of feed.sections.entries()) {
-						await fetch(feed.source)
-							.then((resp) => resp.text())
-							.then((res) => {
-								const copySection = { ...section } // got null if not copy
-								const $ = cheerio.load(res)
-								const section_selector = $(copySection.section_selector)
-								
-								for (let l = 0; l < section_selector.length; l++) {
-									const title = $(section.title_selector, section_selector[l]).text()
-									const subtitle = $(section.subtitle_selector, section_selector[l]).text()
-									const a = $(section.url_selector, section_selector[l]).attr('href')
-									
-									// validate
-									if (!a || !title) continue
-									if (section.title_must_contain
-										&& !title.toLowerCase().includes(section.title_must_contain.toLowerCase())) continue
-									if (section.subtitle_must_contain
-										&& !subtitle.toLowerCase().includes(section.subtitle_must_contain.toLowerCase())) continue
-									
-									Rsss[a] = {
-										url: a,
-										category: feed.category,
-										title: title,
-										subtitle: subtitle,
-										timestamp: Date.now(),
-									}
-								}
-							})
-						
-					}
-				}
-				
-				// console.log('Rsss: ', Rsss)
-				for (const [i, rss] of Object.keys(Rsss).entries()) {
-					await state.rssService.create(Rsss[rss])
-						.catch((e) => console.warn('could not create rss: ', e.message))
-						.then(() => console.debug('rss created: ', rss))
-				}
-			})
-		
-		
+		// state.feedService.findAllByCategory('economia')
+		// 	.then(async (res) => {
+		// 		const Rsss: { [key: string]: Rss } = {}
+		// 		const feeds = res.searchResult.feeds || []
+		//
+		// 		for (const [i, feed] of feeds.entries()) {
+		// 			for (const [j, section] of feed.sections.entries()) {
+		// 				await fetch(feed.source)
+		// 					.then((resp) => resp.text())
+		// 					.then((res) => {
+		// 						const copySection = { ...section } // got null if not copy
+		// 						const $ = cheerio.load(res)
+		// 						const section_selector = $(copySection.section_selector)
+		//
+		// 						for (let l = 0; l < section_selector.length; l++) {
+		// 							const title = $(section.title_selector, section_selector[l]).text()
+		// 							const subtitle = $(section.subtitle_selector, section_selector[l]).text()
+		// 							const a = $(section.url_selector, section_selector[l]).attr('href')
+		//
+		// 							// validate
+		// 							if (!a || !title) continue
+		// 							if (section.title_must_contain
+		// 								&& !title.toLowerCase().includes(section.title_must_contain.toLowerCase())) continue
+		// 							if (section.subtitle_must_contain
+		// 								&& !subtitle.toLowerCase().includes(section.subtitle_must_contain.toLowerCase())) continue
+		//
+		// 							Rsss[a] = {
+		// 								url: a,
+		// 								category: feed.category,
+		// 								title: title,
+		// 								subtitle: subtitle,
+		// 								timestamp: Date.now(),
+		// 							}
+		// 						}
+		// 					})
+		//
+		// 			}
+		// 		}
+		//
+		// 		for (const [i, rss] of Object.keys(Rsss).entries()) {
+		// 			await state.rssService.create(Rsss[rss])
+		// 				.catch((e) => console.warn('could not create rss: ', e.message))
+		// 				.then(() => console.debug('rss created: ', rss))
+		// 		}
+		// 	})
 	}
+	
+	if (state.isLoading) return <Loading />
 	
 	return (
 		<SafeAreaView style={feedStyle.container}>

@@ -15,6 +15,7 @@ export const StateContext = React.createContext(
 			cleanNewSchemaScreen: () => {},
 			handleNewScreenSectionFields: (index: number, fieldName: string, value: string) => {},
 			setIsEditingSchema: (isEditing: boolean) => {},
+			setIsLoading: (isEditing: boolean) => {},
 		}
 	}
 )
@@ -34,7 +35,8 @@ export const Context = (props: { children: React.ReactNode }) => {
 		setNewSchemaScreen: setNewSchemaScreen.bind(null, state, setState),
 		cleanNewSchemaScreen: cleanNewSchemaScreen.bind(null, state, setState),
 		handleNewScreenSectionFields: handleNewScreenSectionFields.bind(null, state, setState),
-		setIsEditingSchema: setIsEditingSchema.bind(null, state, setState)
+		setIsEditingSchema: setIsEditingSchema.bind(null, state, setState),
+		setIsLoading: setIsLoading.bind(null, state, setState),
 	}
 	
 	return (
@@ -42,6 +44,10 @@ export const Context = (props: { children: React.ReactNode }) => {
 			{props.children}
 		</StateContext.Provider>
 	)
+}
+
+const setIsLoading = (state: State, setState: Function, loading: boolean) => {
+	setState({ isLoading: loading })
 }
 
 const setCategories = (state: State, setState: Function, categories: Array<{ [key: string]: string }>) => {

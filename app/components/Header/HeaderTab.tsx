@@ -60,6 +60,11 @@ const HeaderTab = (props: any) => {
 		buttonContainerStyle={headerTabStyles.buttonContainerStyle}
 		buttonStyle={headerTabStyles.buttonStyle}
 		selectedButtonStyle={headerTabStyles.selectedButtonStyle}
+		
+		disabled={state.isLoading}
+		disabledSelectedTextStyle={headerTabStyles.selectedTextStyle}
+		disabledTextStyle={headerTabStyles.textStyle}
+		disabledSelectedStyle={headerTabStyles.selectedButtonStyle}
 	/>
 }
 

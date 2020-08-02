@@ -29,6 +29,7 @@ export default interface State {
 	rssService: RssService
 	newSchemaScreen: Feed
 	isEditingSchema: boolean
+	isLoading: boolean
 }
 
 export const getInitialState = (): State => {
@@ -42,6 +43,7 @@ export const getInitialState = (): State => {
 			newSchema: false,
 		},
 		isEditingSchema: false,
+		isLoading: false,
 		feedService: feedService,
 		rssService: rssService,
 		categories: [],

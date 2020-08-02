@@ -4,8 +4,11 @@ import Icon from "react-native-vector-icons/MaterialIcons"
 import { StateContext } from "../../context/Context"
 import * as RootNavigation from "../../routes/RootNavigation"
 import { FEEDS, NEW_FEED } from "../../variables"
-import { Alert } from "react-native";
-import { Feed, Section } from "../../feed/feed";
+import { Alert } from "react-native"
+import { Section } from "../../feed/feed"
+import { Rss } from "../../rss/rss";
+
+const cheerio = require('react-native-cheerio')
 
 Icon.loadFont()
 
@@ -51,6 +54,59 @@ export const RightIconHeader = () => {
 			.catch(e => console.warn(e.message))
 	}
 	
+	const generateRsssByCategory = (category: string) => {
+		actions.setIsLoading(true)
+		// // fixme
+		// return
+		
+		state.feedService.findAllByCategory(category)
+			.then(async (res) => {
+				const Rsss: { [key: string]: Rss } = {}
+				const feeds = res.searchResult.feeds || []
+				
+				for (const [i, feed] of feeds.entries()) {
+					for (const [j, section] of feed.sections.entries()) {
+						await fetch(feed.source)
+							.then((resp) => resp.text())
+							.then((res) => {
+								const copySection = { ...section } // got null if not copy
+								const $ = cheerio.load(res)
+								const section_selector = $(copySection.section_selector)
+								
+								for (let l = 0; l < section_selector.length; l++) {
+									const title = $(section.title_selector, section_selector[l]).text()
+									const subtitle = $(section.subtitle_selector, section_selector[l]).text()
+									const a = $(section.url_selector, section_selector[l]).attr('href')
+									
+									// validate
+									if (!a || !title) continue
+									if (section.title_must_contain
+										&& !title.toLowerCase().includes(section.title_must_contain.toLowerCase())) continue
+									if (section.subtitle_must_contain
+										&& !subtitle.toLowerCase().includes(section.subtitle_must_contain.toLowerCase())) continue
+									
+									Rsss[a] = {
+										url: a,
+										category: feed.category,
+										title: title,
+										subtitle: subtitle,
+										timestamp: Date.now(),
+									}
+								}
+							})
+						
+					}
+				}
+				
+				for (const [i, rss] of Object.keys(Rsss).entries()) {
+					await state.rssService.create(Rsss[rss])
+						.catch((e) => console.warn('could not create rss: ', e.message))
+						.then(() => console.debug('rss created: ', rss))
+				}
+			})
+			.then(() => actions.setIsLoading(false))
+	}
+	
 	if (state.screens.newSchema) {
 		return (
 			<Icon
@@ -76,12 +132,14 @@ export const RightIconHeader = () => {
 		)
 	}
 	
+	if (state.isLoading) return null
+	
 	return (
 		<Icon
 			name="refresh"
 			size={24}
 			color="#FFF"
-			onPress={() => console.log('refresh')}
+			onPress={() => generateRsssByCategory(state.currentCategory)}
 		/>
 	)
 }
