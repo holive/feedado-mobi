@@ -11,6 +11,7 @@ class MongoConfigRepo implements Repository {
 	}
 	
 	public findAll = async (): Promise<Config> => {
+		// await this.configCollection.removeAsync({}, { multi: true })
 		const result = await this.configCollection.findAsync({})
 		return result[0] as Config
 	}

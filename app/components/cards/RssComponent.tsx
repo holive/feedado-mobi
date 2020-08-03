@@ -16,6 +16,8 @@ import { StateContext } from "../../context/Context"
 import { Button } from "react-native-elements"
 import { Rss } from "../../rss/rss"
 import Loading from "../Loading";
+import { loadInitialData } from "../../context/state";
+import { NEW_INSTALLATION } from "../../config/config";
 
 // const cheerio = require('react-native-cheerio')
 
@@ -139,13 +141,29 @@ const RssComponent = () => {
 	const rssListInitialState: Array<Rss> = []
 	const [currentRssList, setCurrentRssList] = useState(rssListInitialState)
 	
+	// load demo content: refactor, please
+	useEffect(() => {
+		state.configService.get().then(async (res) => {
+			console.debug('test load rss', res)
+			if (res) return
+
+			await state.configService.update({ new_installation: false, max_feeds_by_category: '' })
+			console.debug('get doc:', await state.configService.get())
+
+			loadInitialData(state.configService, state.rssService, state.feedService)
+				.then(() => {
+					actions.setConfig({ max_feeds_by_category: '', new_installation: false }, true)
+				})
+		})
+	}, [state.config.new_installation])
+
 	useEffect(() => {
 		state.rssService.findAllByCategory(state.currentCategory)
 			.then((res) => {
 				const rsss = res.searchResult.rsss ? res.searchResult.rsss : []
 				setCurrentRssList(rsss)
 			})
-	}, [state.currentCategory, state.screens.feeds])
+	}, [state.currentCategory, state.screens.feeds, state.categories])
 	
 	const renderItem = (props: { item: Rss }) => {
 		return (
@@ -158,22 +176,33 @@ const RssComponent = () => {
 	}
 	
 	const teste = async () => {
-		// await state.feedService.create({
-		// 	source: 'https://google.com.br',
-		// 	description: 'string',
-		// 	category: 'economia',
-		// 	// @ts-ignore
-		// 	sections: [{
-		// 		section_selector: 'df',
-		// 		title_selector: '234',
-		// 		title_must_contain: '3re34r3',
-		// 		subtitle_selector: '',
-		// 		subtitle_must_contain: '',
-		// 		url_selector: 'a',
-		// 	}]
-		// }).then((value) => {
-		// 	console.log('test: then: ', value)
-		//  }).catch((e) => console.log('teste: catch: ', e.message))
+		// test create feed
+		// const newFeed: Feed = {
+		// 	source: "https://economia.estadao.com.br",
+		// 	description: "Notícias de Economia e Negócios | Estadão",
+		// 	category: "teste",
+		// 	sections: new Map<number, Section>(),
+		// }
+		// newFeed.sections.set(0, {
+		// 	section_selector: ".row.management section",
+		// 	title_selector: ".text-wrapper h3",
+		// 	title_must_contain: "",
+		// 	subtitle_selector: ".text-wrapper p",
+		// 	subtitle_must_contain: "",
+		// 	url_selector: "a"
+		// })
+		// newFeed.sections.set(1, {
+		// 	section_selector: "#ultimas .lista section",
+		// 	title_selector: ".third",
+		// 	title_must_contain: "",
+		// 	subtitle_selector: "p",
+		// 	subtitle_must_contain: "",
+		// 	url_selector: ".link-title"
+		// })
+		// await state.feedService.create(newFeed).then((value) => {
+		// 	console.debug('test create feed')
+		// 	if (value) console.warn('feed demo:', value.message)
+		// }).catch((e) => console.warn('feed demo:: catch: ', e.message))
 		
 		// // test remove
 		// await state.feedService.delete('kjh23g45jk2h34jkb2kj345b')
@@ -185,11 +214,11 @@ const RssComponent = () => {
 		// 	.then((res) => {
 		// 		console.log('test findall: then: ')
 		// 		res.searchResult.feeds?.forEach((v) => {
-		// 			console.log(v)
+		// 			console.log(v.sections)
 		// 		})
 		// 	})
 		// 	.catch((e) => console.log('test findall: catch: ', e.message))
-		//
+
 		// test update
 		// await state.feedService.update({
 		// 	source: 'https://google.com.br',
@@ -274,6 +303,11 @@ const RssComponent = () => {
 		// 	})
 		
 		// teste config
+		state.configService.get()
+			.then((res) => {
+				console.debug('test config get: ', res)
+			})
+
 		// await state.configService.update({max_feeds_by_category: '10'})
 		// 	.then(() => {
 		// 		state.configService.get()

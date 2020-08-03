@@ -16,8 +16,8 @@ export const StateContext = React.createContext(
 			cleanNewSchemaScreen: () => {},
 			handleNewScreenSectionFields: (index: number, fieldName: string, value: string) => {},
 			setIsEditingSchema: (isEditing: boolean) => {},
-			setIsLoading: (isEditing: boolean) => {},
-			setConfig: (config: Config) => {},
+			setIsLoading: (isEditing: boolean, otherStateKeyToUpdate?: {[key: string]: any}) => {},
+			setConfig: (config: Config, isDemoConfig?: boolean) => {},
 		}
 	}
 )
@@ -49,11 +49,18 @@ export const Context = (props: { children: React.ReactNode }) => {
 	)
 }
 
-const setConfig = (state: State, setState: Function, config: Config) => {
+const setConfig = (state: State, setState: Function, config: Config, isDemoConfig?: boolean) => {
+	if (isDemoConfig) {
+		setState({ config: config, currentCategory: 'demo' })
+		return
+	}
 	setState({ config: config })
 }
 
-const setIsLoading = (state: State, setState: Function, loading: boolean) => {
+const setIsLoading = (state: State, setState: Function, loading: boolean, otherStateKeyToUpdate?: {[key: string]: any}) => {
+	if (otherStateKeyToUpdate) {
+		setState({ isLoading: loading, otherStateKeyToUpdate: otherStateKeyToUpdate })
+	}
 	setState({ isLoading: loading })
 }
 

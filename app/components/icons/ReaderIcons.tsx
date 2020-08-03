@@ -71,9 +71,7 @@ export const RightIconHeader = () => {
 	
 	const generateRsssByCategory = (category: string) => {
 		actions.setIsLoading(true)
-		// // fixme
-		// return
-		
+		state.currentCategory
 		state.feedService.findAllByCategory(category)
 			.then(async (res) => {
 				const Rsss: { [key: string]: Rss } = {}
@@ -119,7 +117,12 @@ export const RightIconHeader = () => {
 						.then(() => console.debug('rss created: ', rss))
 				}
 			})
-			.then(() => actions.setIsLoading(false))
+			.then(() => {
+				// reload feeds screen
+				state.feedService.findAllCategories((cats: Array<{ [key: string]: string }>) => {
+					actions.setIsLoading(false, { categories: cats })
+				})
+			})
 	}
 	
 	const saveConfig = () => {
