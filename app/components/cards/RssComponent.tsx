@@ -321,7 +321,7 @@ const RssComponent = () => {
 	
 	return (
 		<SafeAreaView style={feedStyle.container}>
-			<Button onPress={() => teste()}>teste</Button>
+			{/*<Button onPress={() => teste()}>teste</Button>*/}
 			
 			<Dropdown/>
 			
