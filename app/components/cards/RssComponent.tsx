@@ -25,7 +25,7 @@ export const Dropdown = () => {
 	const { state, actions } = useContext(StateContext)
 	const [selectedCategory, setCategory] = useState('')
 	
-	useEffect(() => fetchCategoriesAndUpdateDropdown(), [])
+	useEffect(() => fetchCategoriesAndUpdateDropdown(), [state.screens.newSchema])
 	
 	const fetchCategoriesAndUpdateDropdown = () => {
 		state.feedService.findAllCategories((cats: Array<{ [key: string]: string }>) => {
