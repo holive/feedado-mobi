@@ -163,7 +163,7 @@ const RssComponent = () => {
 				const rsss = res.searchResult.rsss ? res.searchResult.rsss : []
 				setCurrentRssList(rsss)
 			})
-	}, [state.currentCategory, state.screens.feeds])
+	}, [state.currentCategory, state.screens.feeds, state.categories])
 	
 	const renderItem = (props: { item: Rss }) => {
 		return (

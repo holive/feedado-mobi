@@ -24,7 +24,7 @@ const HeaderTab = (props: any) => {
 	const { state, actions } = useContext(StateContext)
 	const [selectedIndex, setSelectedIndex] = useState(0)
 	
-	const newSchemaText = 'NEW SCHEMA'
+	const newSchemaText = ''
 	const [tabText, settabText] = useState(newSchemaText)
 	
 	useEffect(() => {
@@ -32,7 +32,7 @@ const HeaderTab = (props: any) => {
 			settabText(state.newSchemaScreen.source.replace('http://', '').replace('https://', ''))
 			actions.setIsEditingSchema(false)
 		} else if (!state.isEditingSchema && !state.newSchemaScreen.source) {
-			settabText(newSchemaText)
+			settabText('NEW SCHEMA')
 		}
 	}, [state.newSchemaScreen.source])
 	
