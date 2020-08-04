@@ -47,6 +47,9 @@ const HeaderTab = (props: any) => {
 		actions.setScreens({ schemas: true })
 	}
 	
+	// return behavior: change tab selection
+	useEffect(() => { if (state.screens.feeds) setSelectedIndex(0) }, [state.screens.feeds])
+	
 	if (state.screens.newSchema) return <NewSchemaTab text={tabText}/>
 	
 	if (state.screens.config) return null

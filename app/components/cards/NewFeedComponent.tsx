@@ -1,11 +1,13 @@
 import React, { useContext, useEffect, useState } from "react"
-import { ScrollView, StyleSheet, Text, View } from "react-native"
+import { Alert, ScrollView, StyleSheet, Text, View } from "react-native"
 import { StateContext } from "../../context/Context"
 import { Section } from "../../feed/feed"
 import { Input } from "react-native-elements";
 import { AddSchemaSection, RemoveSchemaSection } from "../icons/IconsSchemaSection";
 import { newEmptySection } from "../../context/state";
 import styles from '../../styles/theme.style'
+import * as RootNavigation from "../../routes/RootNavigation";
+import { FEEDS } from "../../variables";
 
 export const newSchemaStyles = StyleSheet.create({
 	container: {
@@ -125,6 +127,11 @@ const RenderSection = (index: number, section: Section, handleChange: (index: nu
 
 export default (props: any) => {
 	const { state, actions } = useContext(StateContext)
+	
+	// return behavior
+	useEffect(() => {
+		props.navigation.addListener('beforeRemove', (e: any) => actions.setScreens({ schemas: true }))
+	}, [props.navigation])
 	
 	useEffect(() => {
 		if (props.route.params && props.route.params.source) {

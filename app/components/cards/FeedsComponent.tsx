@@ -72,10 +72,15 @@ const Item = (props: { item: Feed, currentFeedList: Array<Feed>, setCurrentFeedL
 	)
 }
 
-const FeedsComponent = () => {
+const FeedsComponent = (props: any) => {
 	const { state, actions } = useContext(StateContext)
 	const feedListInitialState: Array<Feed> = []
 	const [currentFeedList, setCurrentFeedList] = useState(feedListInitialState)
+	
+	// // return behavior
+	useEffect(() => {
+		props.navigation.addListener('beforeRemove', (e: any) => actions.setScreens({ feeds: true }))
+	}, [props.navigation])
 	
 	useEffect(() => {
 		loadFeeds()
