@@ -61,7 +61,7 @@ export const Dropdown = () => {
 						marginRight: 16,
 					},
 					iconContainer: {
-						top: 16,
+						top: 14,
 						right: 25,
 					},
 				}}
