@@ -77,10 +77,15 @@ const setNewSchemaScreen = (state: State, setState: Function, schema: Feed) => {
 }
 
 const cleanNewSchemaScreen = (state: State, setState: Function) => {
-	const newEmpty = {...newSchemaScreenInitialState}
-	newEmpty.sections =  new Map<number, Section>();
-	
-	setState({ newSchemaScreen: newEmpty })
+	setState({
+		newSchemaScreen: {
+			source: '',
+			description: '',
+			category: '',
+			sections: new Map<number, Section>()
+		},
+		isEditingSchema: false,
+	})
 }
 
 const handleNewScreenSectionFields = (state: State, setState: Function, index: number, fieldName: string, value: string) => {
@@ -117,6 +122,22 @@ const setScreens = (state: State, setState: Function, screen: { [key: string]: b
 		schemas: false,
 		newSchema: false,
 		config: false,
+	}
+	
+	// clear newSchemaScreen state
+	if (screen['schemas']) {
+		setState({
+			isEditingSchema: false,
+			screens: { ...newScreenState, ...screen },
+			newSchemaScreen: {
+				source: '',
+				description: '',
+				category: '',
+				sections: new Map<number, Section>()
+			}
+		})
+
+		return
 	}
 	
 	setState({ screens: { ...newScreenState, ...screen } })

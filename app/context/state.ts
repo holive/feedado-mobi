@@ -56,7 +56,12 @@ export const getInitialState = (): State => {
 		configService: configService,
 		categories: [],
 		currentCategory: '',
-		newSchemaScreen: { ...newSchemaScreenInitialState },
+		newSchemaScreen: {
+			source: '',
+			description: '',
+			category: '',
+			sections: new Map<number, Section>()
+		},
 		config: { max_feeds_by_category: '', new_installation: true }
 	}
 }

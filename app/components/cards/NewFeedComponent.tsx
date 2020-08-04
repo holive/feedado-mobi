@@ -133,7 +133,7 @@ export default (props: any) => {
 				.then(res => {
 					let newFeed = {...res.feed}
 					newFeed.sections = new Map<number, Section>()
-					
+
 					res.feed.sections.forEach((v, i) => {
 						const sec: Section = {
 							section_selector: v.section_selector || '',
@@ -143,17 +143,16 @@ export default (props: any) => {
 							title_selector: v.title_selector || '',
 							url_selector: v.url_selector || '',
 						}
-						
+
 						newFeed.sections.set(i, sec)
 					})
 
 					actions.setNewSchemaScreen(newFeed)
 				})
 				.catch(e => console.debug('state.feedService.findBySource', e.message))
-			
+
 			return
 		}
-		actions.cleanNewSchemaScreen()
 	}, [])
 	
 	const handleChanges = (label: string, value: string | Object) => {
