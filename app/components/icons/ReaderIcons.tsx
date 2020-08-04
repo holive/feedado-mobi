@@ -151,7 +151,7 @@ export const RightIconHeader = () => {
 			<Icon
 				name="save"
 				size={24}
-				color="#FFF"
+				style={iconsStyle.icon}
 				onPress={() => saveSchema()}
 			/>
 		)
@@ -162,7 +162,7 @@ export const RightIconHeader = () => {
 			<Icon
 				name="add"
 				size={24}
-				color="#FFF"
+				style={iconsStyle.icon}
 				onPress={() => {
 					RootNavigation.navigate(NEW_FEED, null)
 					actions.setScreens({ newSchema: true })
@@ -229,6 +229,6 @@ export const LeftIconsdHeader = () => {
 const iconsStyle = StyleSheet.create({
 	icon: {
 		color: '#FFF',
-		marginHorizontal: 6,
+		marginHorizontal: 8,
 	}
 })
