@@ -43,32 +43,32 @@ export const Dropdown = () => {
 	if (state.isLoading) return null
 	
 	return (
-		<RNPickerSelect
-			onValueChange={(category) => setCurrentCategory(category)}
-			// @ts-ignore
-			items={state.categories}
-			value={selectedCategory}
-			style={{
-				inputAndroid: {
-					fontSize: 14,
-					paddingHorizontal: 14,
-					paddingVertical: 5,
-					marginTop: 20,
-					marginBottom: 20,
-					marginLeft: 16,
-					marginRight: 16,
-					borderRadius: 3,
-					color: '#5c6b76',
-					backgroundColor: '#fff',
-				},
-				iconContainer: {
-					top: 30,
-					right: 25,
-				},
-			}}
-			Icon={() => <Icon name="keyboard-arrow-down" style={feedStyle.icon}/>}
-			useNativeAndroidPickerStyle={false}
-		/>
+		<View style={{paddingLeft: 16, paddingRight: 0, marginTop: 20, marginBottom: 20, width: '100%', }}>
+			<RNPickerSelect
+				pickerProps={{ mode: 'dropdown'}}
+				onValueChange={(category) => setCurrentCategory(category)}
+				// @ts-ignore
+				items={state.categories}
+				value={selectedCategory}
+				style={{
+					inputAndroid: {
+						fontSize: 14,
+						paddingHorizontal: 14,
+						paddingVertical: 5,
+						borderRadius: 3,
+						color: '#5c6b76',
+						backgroundColor: '#fff',
+						marginRight: 16,
+					},
+					iconContainer: {
+						top: 16,
+						right: 25,
+					},
+				}}
+				Icon={() => <Icon name="keyboard-arrow-down" style={feedStyle.icon}/>}
+				useNativeAndroidPickerStyle={false}
+			/>
+		</View>
 	)
 }
 
@@ -358,6 +358,7 @@ const feedStyle = StyleSheet.create({
 		color: "#ddd",
 		fontSize: 20,
 		alignSelf: 'center',
+		top: -4,
 	},
 	title: {
 		fontSize: 13,
